@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Ventas</title>
+    <style>
+      /* ESTILOS GENERALES */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f0f2f5;
+      }
+
+      /* BOTÓN HOME */
+      .btn-home {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #667eea;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-home:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 80px auto 20px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      select, input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        background: #007BFF;
+        color: white;
+        padding: 10px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #mensaje {
+        text-align: center;
+        color: green;
+        font-weight: bold;
+        margin-top: 15px;
+        display: none;
+      }
+
+      @media (max-width: 480px) {
+        .btn-home {
+          top: 10px;
+          left: 10px;
+          padding: 8px 15px;
+          font-size: 13px;
+        }
+
+        .container {
+          margin: 60px 10px 10px;
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- BOTÓN HOME -->
+<a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" class="btn-home" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+  <span>🏠</span>
+  <span>Home</span>
+</a>
+
+    <div class="container">
+      <h2>Registro de Ventas</h2>
+
+      <label for="categoria">Categoría:</label>
+      <select id="categoria"></select>
+
+      <label for="producto">Producto:</label>
+      <input type="text" id="producto" placeholder="Nombre del producto">
+
+      <label for="modoPago">Modo de Pago:</label>
+      <select id="modoPago"></select>
+
+      <label for="precio">Precio Unitario (S/):</label>
+      <input type="number" id="precio" step="0.01" min="0">
+
+      <label for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" min="1">
+
+      <label for="total">Total (S/):</label>
+      <input type="text" id="total" readonly>
+
+      <button onclick="registrarVenta()">Registrar venta</button>
+
+      <p id="mensaje"></p>
+    </div>
+
+    <script>
+      // OBTENER URL BASE
+      const baseUrl = window.location.href.split('?')[0];
+
+      // CARGAR DESPLEGABLES
+      google.script.run.withSuccessHandler(cargarCategorias).getCategorias();
+      google.script.run.withSuccessHandler(cargarModosPago).getModosPago();
+
+      function cargarCategorias(data) {
+        const select = document.getElementById("categoria");
+        data.forEach(cat => {
+          const option = document.createElement("option");
+          option.value = cat;
+          option.textContent = cat;
+          select.appendChild(option);
+        });
+      }
+
+      function cargarModosPago(data) {
+        const select = document.getElementById("modoPago");
+        data.forEach(mp => {
+          const option = document.createElement("option");
+          option.value = mp;
+          option.textContent = mp;
+          select.appendChild(option);
+        });
+      }
+
+      // CALCULAR TOTAL EN TIEMPO REAL
+      document.getElementById("precio").addEventListener("input", calcularTotal);
+      document.getElementById("cantidad").addEventListener("input", calcularTotal);
+
+      function calcularTotal() {
+        const precio = parseFloat(document.getElementById("precio").value) || 0;
+        const cantidad = parseFloat(document.getElementById("cantidad").value) || 0;
+        document.getElementById("total").value = (precio * cantidad).toFixed(2);
+      }
+
+      // REGISTRAR VENTA (ENVÍO INSTANTÁNEO)
+      function registrarVenta() {
+        const data = {
+          categoria: document.getElementById("categoria").value,
+          producto: document.getElementById("producto").value,
+          modoPago: document.getElementById("modoPago").value,
+          precio: document.getElementById("precio").value,
+          cantidad: document.getElementById("cantidad").value
+        };
+
+        // Mostrar mensaje inmediato
+        const msg = document.getElementById("mensaje");
+        msg.textContent = "Registro enviado";
+        msg.style.display = "block";
+        msg.style.color = "green";
+
+        // Enviar al servidor sin esperar confirmación
+        google.script.run.registrarVenta(data);
+
+        // Limpiar formulario
+        document.getElementById("producto").value = "";
+        document.getElementById("precio").value = "";
+        document.getElementById("cantidad").value = "";
+        document.getElementById("total").value = "";
+
+        // Ocultar mensaje tras 10 segundos
+        setTimeout(() => msg.style.display = "none", 10000);
+      }
+    </script>
+  </body>
+</html>
