@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intranet Muyu</title>
+  
+  <!-- Metaetiquetas para vista previa en WhatsApp y redes sociales -->
+  <meta property="og:title" content="Intranet Muyu">
+  <meta property="og:description" content="Sistema de Gestión de Ventas">
+  <meta property="og:type" content="website">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 40px;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 18px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-venta-simple {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-venta-multiple {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+
+    .btn-precio {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+    }
+
+    .btn-perfumes {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: white;
+    }
+
+    .icon {
+      font-size: 1.5rem;
+    }
+
+    .footer {
+      margin-top: 30px;
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .btn {
+        padding: 15px 25px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌿 Intranet Muyu</h1>
+    <p class="subtitle">Sistema de Gestión de Ventas</p>
+    
+    <div class="menu-buttons">
+      <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=univenta" target="_blank" class="btn btn-venta-simple">
+        <span class="icon">📝</span>
+        <span>Venta Simple</span>
+      </a>
+      
+      <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=multiventa" target="_blank" class="btn btn-venta-multiple">
+        <span class="icon">📊</span>
+        <span>Venta Múltiple</span>
+      </a>
+      
+      <a href="https://script.google.com/macros/s/AKfycby9LuCHB5l3yrf_u0V0ayFpvJ58R-qHrTeaQkBhAfDcTrItw4_7gCAYhw-qcvUqtxwk/exec" target="_blank" class="btn btn-precio">
+        <span class="icon">💰</span>
+        <span>Precio</span>
+      </a>
+
+      <a href="https://script.google.com/macros/s/AKfycbxhP_g5_d3Yk8qqZaYaJc4I07Qp3gJGMJrGqGkxK9i-uorDa8UNODtpF_OdzB0mPuZUOQ/exec" target="_blank" class="btn btn-perfumes">
+        <span class="icon">🌸</span>
+        <span>Perfumes</span>
+      </a>
+    </div>
+    
+    <div class="footer">
+      <p>© 2025 Muyu - Todos los derechos reservados</p>
+    </div>
+  </div>
+</body>
+</html>
