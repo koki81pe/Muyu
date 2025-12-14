@@ -1,0 +1,1398 @@
+// ============================================
+// SOLID CODE - MUYU
+// Generado: 14/12/2025, 4:41:41 p. m.
+// Total de archivos: 6
+// ============================================
+
+
+
+// ============================================
+// ARCHIVO 1/6: Master.gs
+// URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Master.gs
+// ============================================
+
+//// ============================================
+//// MASTER.GS - CONFIGURACIÓN Y ENRUTADOR
+//// ============================================
+
+// CONFIGURACIÓN GLOBAL (solo aquí, una vez)
+const SPREADSHEET_ID = '1lZ8OEIfeUvHqxWsVHYy4W1ow2VpIYCvTr9YFAxDkCCU';
+const HOJA_VENTAS = 'Ventas';
+const HOJA_CATEGORIAS = 'Cat';
+const HOJA_MEDIOS_PAGO = 'Mpago';
+
+//// ENRUTADOR PRINCIPAL
+function doGet(e) {
+  try {
+    const page = e.parameter.page || 'master';
+    
+    switch(page) {
+      case 'master':
+        return HtmlService.createHtmlOutputFromFile('Masterw')
+          .setTitle('Intranet Muyu')
+          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+      
+      case 'univenta':
+        return HtmlService.createHtmlOutputFromFile('Univentaw')
+          .setTitle('Registro de Ventas')
+          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+      
+      case 'multiventa':
+        return HtmlService.createHtmlOutputFromFile('Multiventaw')
+          .setTitle('Registro Múltiple de Ventas')
+          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+      
+      default:
+        return HtmlService.createHtmlOutputFromFile('Masterw')
+          .setTitle('Intranet Muyu')
+          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+    }
+  } catch (error) {
+    return HtmlService.createHtmlOutput(`
+      <h2>Error</h2>
+      <p>${error.message}</p>
+      <p>Verifica que los archivos HTML existan con los nombres correctos:</p>
+      <ul>
+        <li>Masterw.html</li>
+        <li>Univentaw.html</li>
+        <li>Multiventaw.html</li>
+      </ul>
+    `);
+  }
+}
+
+//// FUNCIONES AUXILIARES COMPARTIDAS
+function obtenerSpreadsheet() {
+  return SpreadsheetApp.openById(SPREADSHEET_ID);
+}
+
+function obtenerFechaPeru() {
+  return Utilities.formatDate(new Date(), "GMT-5", "dd/MM/yyyy");
+}
+
+function encontrarUltimaFila(sheet) {
+  const colCValues = sheet.getRange('C2:C').getValues();
+  let lastRow = 1;
+  for (let i = colCValues.length - 1; i >= 0; i--) {
+    if (colCValues[i][0] !== '') {
+      lastRow = i + 2;
+      break;
+    }
+  }
+  return lastRow + 1;
+}
+
+
+// ============================================
+// ARCHIVO 2/6: Masterw.html
+// URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Masterw.html
+// ============================================
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intranet Muyu</title>
+  
+  <!-- Metaetiquetas para vista previa en WhatsApp y redes sociales -->
+  <meta property="og:title" content="Intranet Muyu">
+  <meta property="og:description" content="Sistema de Gestión de Ventas">
+  <meta property="og:type" content="website">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 1rem;
+      margin-bottom: 40px;
+    }
+
+    .menu-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 18px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:active {
+      transform: translateY(-1px);
+    }
+
+    .btn-venta-simple {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .btn-venta-multiple {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+
+    .btn-precio {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: white;
+    }
+
+    .btn-perfumes {
+      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+      color: white;
+    }
+
+    .icon {
+      font-size: 1.5rem;
+    }
+
+    .footer {
+      margin-top: 30px;
+      color: #999;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 30px 20px;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      .btn {
+        padding: 15px 25px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌿 Intranet Muyu</h1>
+    <p class="subtitle">Sistema de Gestión de Ventas</p>
+    
+    <div class="menu-buttons">
+      <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=univenta" target="_blank" class="btn btn-venta-simple">
+        <span class="icon">📝</span>
+        <span>Venta Simple</span>
+      </a>
+      
+      <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=multiventa" target="_blank" class="btn btn-venta-multiple">
+        <span class="icon">📊</span>
+        <span>Venta Múltiple</span>
+      </a>
+      
+      <a href="https://script.google.com/macros/s/AKfycby9LuCHB5l3yrf_u0V0ayFpvJ58R-qHrTeaQkBhAfDcTrItw4_7gCAYhw-qcvUqtxwk/exec" target="_blank" class="btn btn-precio">
+        <span class="icon">💰</span>
+        <span>Precio</span>
+      </a>
+
+      <a href="https://script.google.com/macros/s/AKfycbxhP_g5_d3Yk8qqZaYaJc4I07Qp3gJGMJrGqGkxK9i-uorDa8UNODtpF_OdzB0mPuZUOQ/exec" target="_blank" class="btn btn-perfumes">
+        <span class="icon">🌸</span>
+        <span>Perfumes</span>
+      </a>
+    </div>
+    
+    <div class="footer">
+      <p>© 2025 Muyu - Todos los derechos reservados</p>
+    </div>
+  </div>
+</body>
+</html>
+
+
+// ============================================
+// ARCHIVO 3/6: Multivenga.gs
+// URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Multivenga.gs
+// ============================================
+
+//// ============================================
+//// MULTIVENTA.GS - MÓDULO DE VENTA MÚLTIPLE
+//// ============================================
+
+//// CARGAR MEDIOS DE PAGO (alias para compatibilidad)
+function getMediosPago() {
+  return getModosPago();
+}
+
+//// REGISTRAR VENTAS MÚLTIPLES
+function registrarVentasMultiples(ventas) {
+  const ss = obtenerSpreadsheet();
+  const sheet = ss.getSheetByName(HOJA_VENTAS);
+  
+  // Fecha Perú
+  const fechaPeru = obtenerFechaPeru();
+  
+  // =====================================================
+  // VALIDACIÓN DE CAMPOS ALERTA - NUEVA LÓGICA
+  // =====================================================
+  // Detectar filas con "campos alerta" (Producto o Precio) pero incompletas
+  const filasProblematicas = [];
+  
+  ventas.forEach((venta, index) => {
+    const tieneProducto = venta.producto && venta.producto.trim() !== '';
+    const tienePrecio = venta.precioUnitario && parseFloat(venta.precioUnitario) > 0;
+    const tieneMedioPago = venta.medioPago && venta.medioPago.trim() !== '';
+    const tieneCantidad = venta.cantidad && parseFloat(venta.cantidad) > 0;
+    
+    // Si tiene CAMPO ALERTA (Producto O Precio)
+    if (tieneProducto || tienePrecio) {
+      // Debe tener TODOS los campos obligatorios
+      if (!tieneProducto || !tieneMedioPago || !tienePrecio || !tieneCantidad) {
+        filasProblematicas.push({
+          fila: index + 1,
+          producto: tieneProducto,
+          medioPago: tieneMedioPago,
+          precio: tienePrecio,
+          cantidad: tieneCantidad
+        });
+      }
+    }
+  });
+  
+  // Si hay filas problemáticas, lanzar error y NO guardar nada
+  if (filasProblematicas.length > 0) {
+    let mensajeError = "⚠️ Hay campos incompletos en las siguientes filas:\n\n";
+    
+    filasProblematicas.forEach(problema => {
+      const camposFaltantes = [];
+      if (!problema.producto) camposFaltantes.push("Producto");
+      if (!problema.medioPago) camposFaltantes.push("Medio de Pago");
+      if (!problema.precio) camposFaltantes.push("Precio");
+      if (!problema.cantidad) camposFaltantes.push("Cantidad");
+      
+      mensajeError += `Fila ${problema.fila}: Falta(n) ${camposFaltantes.join(', ')}\n`;
+    });
+    
+    mensajeError += "\nPor favor completa todos los campos obligatorios o deja la fila completamente vacía.";
+    
+    throw new Error(mensajeError);
+  }
+  
+  // =====================================================
+  // FILTRAR VENTAS VÁLIDAS (solo filas realmente completas)
+  // =====================================================
+  const ventasValidas = ventas.filter(venta =>
+    venta.producto && 
+    venta.producto.trim() !== '' &&
+    venta.medioPago && 
+    venta.medioPago.trim() !== '' &&
+    venta.precioUnitario && 
+    parseFloat(venta.precioUnitario) > 0 &&
+    venta.cantidad && 
+    parseFloat(venta.cantidad) > 0
+  );
+  
+  if (ventasValidas.length === 0) {
+    throw new Error("No hay ventas válidas para registrar. Asegúrate de completar: Producto, Medio de Pago, Precio y Cantidad.");
+  }
+  
+  // =====================================================
+  // REGISTRO EN LA HOJA (sin cambios - mantiene todo igual)
+  // =====================================================
+  // Ubicar la última fila usando la columna guía (Producto - columna C)
+  const newRow = encontrarUltimaFila(sheet);
+  
+  // Contar cuántos Yapes hay en este registro múltiple
+  const cantidadYapes = ventasValidas.filter(v => 
+    v.medioPago.toUpperCase() === 'YAPE'
+  ).length;
+  
+  // Solo aplicar formato si hay MÁS DE 1 Yape
+  const aplicarFormatoYape = cantidadYapes > 1;
+  
+  // Registrar cada venta de forma consecutiva
+  let ultimaFilaYape = -1;
+  
+  ventasValidas.forEach((venta, index) => {
+    const currentRow = newRow + index;
+    
+    sheet.getRange(currentRow, 1).setValue(fechaPeru);
+    sheet.getRange(currentRow, 2).setValue(venta.categoria || '');
+    sheet.getRange(currentRow, 3).setValue(venta.producto);
+    sheet.getRange(currentRow, 4).setValue(venta.medioPago);
+    sheet.getRange(currentRow, 5).setValue(parseFloat(venta.precioUnitario) || 0);
+    sheet.getRange(currentRow, 6).setValue(parseFloat(venta.cantidad) || 0);
+    sheet.getRange(currentRow, 7).setFormula(`=E${currentRow}*F${currentRow}`);
+    
+    // PINTAR CELDA DE PRODUCTO SI ES YAPE Y HAY MÚLTIPLES YAPES
+    if (aplicarFormatoYape && venta.medioPago.toUpperCase() === 'YAPE') {
+      sheet.getRange(currentRow, 3).setBackground('#FFFF66'); // Amarillo intenso
+      ultimaFilaYape = currentRow; // Guardar la última fila Yape
+    }
+  });
+  
+  // APLICAR LÍNEA NEGRA EN LA ÚLTIMA FILA YAPE SI HAY MÚLTIPLES
+  if (aplicarFormatoYape && ultimaFilaYape > 0) {
+    sheet.getRange(ultimaFilaYape, 3).setBorder(
+      null, null, true, null, // solo borde inferior
+      null, null, 
+      '#000000', // Color NEGRO para la línea
+      SpreadsheetApp.BorderStyle.SOLID_MEDIUM
+    );
+  }
+  
+  return `${ventasValidas.length} venta(s) registrada(s) correctamente`;
+}
+
+
+// ============================================
+// ARCHIVO 4/6: Multiventaw.html
+// URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Multiventaw.html
+// ============================================
+
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>Registro Múltiple de Ventas</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f0f2f5;
+      }
+
+      /* BOTÓN HOME */
+      .btn-home {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #667eea;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-home:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      .container {
+        width: 100%;
+        max-width: 980px;
+        margin: 80px auto 20px;
+        background: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+        font-size: 1.5rem;
+      }
+
+      .aplicar-todos {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
+      }
+
+      .aplicar-todos label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #495057;
+      }
+
+      .botones-medios-pago {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn-medio-pago {
+        padding: 12px 24px;
+        font-size: 17px;
+        border: 3px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+      }
+
+      /* Estilos específicos para cada medio de pago */
+      .btn-medio-pago[data-medio="Efectivo"] {
+        background: #4CAF50;
+        color: #ffffff;
+      }
+
+      .btn-medio-pago[data-medio="Yape"] {
+        background: #9117A0;
+        color: #ffffff;
+      }
+
+      .btn-medio-pago[data-medio="Tarjeta"] {
+        background: #3498db;
+        color: #ffffff;
+      }
+
+      .btn-medio-pago:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      .btn-medio-pago.activo {
+        border: 4px solid #000;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        transform: scale(1.05);
+      }
+
+      .tabla-ventas {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 15px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 750px;
+      }
+
+      th {
+        background: #1a73e8;
+        color: white;
+        padding: 12px 8px;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      input, select {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+      }
+
+      input[type="number"] {
+        text-align: right;
+      }
+
+      input[readonly] {
+        background: #f5f5f5;
+        cursor: not-allowed;
+      }
+
+      .fila-venta:hover {
+        background: #f9f9f9;
+      }
+
+      .btn-eliminar-fila {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-eliminar-fila:hover {
+        background: #c82333;
+        transform: scale(1.1);
+      }
+
+      .botones-filas {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        justify-content: center;
+      }
+
+      .btn-fila {
+        padding: 10px 20px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-agregar {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-agregar:hover {
+        background-color: #218838;
+      }
+
+      .resumen-total {
+        text-align: right;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #e7f3ff;
+        border-radius: 8px;
+        border-left: 4px solid #1a73e8;
+      }
+
+      .resumen-total .label {
+        font-size: 14px;
+        color: #495057;
+        font-weight: 600;
+      }
+
+      .resumen-total .monto {
+        font-size: 24px;
+        color: #1a73e8;
+        font-weight: bold;
+        margin-top: 5px;
+      }
+
+      .botones {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        flex: 1;
+        min-width: 150px;
+        padding: 16px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .btn-guardar {
+        background-color: #1a73e8;
+        color: white;
+      }
+
+      .btn-guardar:hover {
+        background-color: #1765c1;
+      }
+
+      .btn-limpiar {
+        background-color: #5f6368;
+        color: white;
+      }
+
+      .btn-limpiar:hover {
+        background-color: #4a4d51;
+      }
+
+      #mensajeExito {
+        margin-top: 15px;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        border-radius: 8px;
+        display: none;
+      }
+
+      .ok {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      @media (max-width: 768px) {
+        .btn-home {
+          top: 10px;
+          left: 10px;
+          padding: 8px 15px;
+          font-size: 13px;
+        }
+
+        .container {
+          margin: 60px 10px 10px;
+          padding: 15px;
+        }
+
+        h2 {
+          font-size: 1.3rem;
+        }
+
+        .aplicar-todos {
+          padding: 10px;
+        }
+
+        .botones-medios-pago {
+          gap: 8px;
+        }
+
+        .btn-medio-pago {
+          padding: 10px 18px;
+          font-size: 15px;
+        }
+
+        th, td {
+          font-size: 12px;
+          padding: 6px 4px;
+        }
+
+        input, select {
+          padding: 6px;
+          font-size: 13px;
+        }
+
+        button {
+          font-size: 16px;
+          padding: 14px;
+        }
+
+        .resumen-total .monto {
+          font-size: 20px;
+        }
+
+        table {
+          min-width: 650px;
+        }
+      }
+    </style>
+    <script>
+      let categorias = [];
+      let mediosPago = [];
+      let contadorFilas = 3;
+      let medioPagoSeleccionado = null;
+
+      function cargarListas() {
+        google.script.run.withSuccessHandler(function(cats) {
+          categorias = cats;
+          llenarSelects();
+        }).getCategorias();
+
+        google.script.run.withSuccessHandler(function(pagos) {
+          mediosPago = pagos;
+          llenarSelects();
+          crearBotonesMediosPago();
+        }).getMediosPago();
+      }
+
+      function crearBotonesMediosPago() {
+        if (mediosPago.length === 0) return;
+
+        const contenedor = document.getElementById('botonesMediosPago');
+        contenedor.innerHTML = '';
+
+        mediosPago.forEach(medio => {
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'btn-medio-pago';
+          boton.setAttribute('data-medio', medio);
+          boton.textContent = medio;
+          boton.onclick = () => seleccionarMedioPago(medio, boton);
+          contenedor.appendChild(boton);
+        });
+      }
+
+      function seleccionarMedioPago(medio, botonClickeado) {
+        // Remover clase activo de todos los botones
+        document.querySelectorAll('.btn-medio-pago').forEach(btn => {
+          btn.classList.remove('activo');
+        });
+
+        // Activar el botón clickeado
+        botonClickeado.classList.add('activo');
+        medioPagoSeleccionado = medio;
+
+        // Aplicar a todas las filas
+        aplicarMedioPagoATodos();
+      }
+
+      function aplicarMedioPagoATodos() {
+        if (!medioPagoSeleccionado) return;
+
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const select = document.getElementById(`medioPago${id}`);
+          if (select) {
+            select.value = medioPagoSeleccionado;
+          }
+        });
+      }
+
+      function llenarSelects() {
+        if (categorias.length === 0 || mediosPago.length === 0) return;
+
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const selectCat = document.getElementById(`categoria${id}`);
+          const selectPago = document.getElementById(`medioPago${id}`);
+
+          if (selectCat && selectPago) {
+            const catActual = selectCat.value;
+            const pagoActual = selectPago.value;
+
+            selectCat.innerHTML = '<option value="">Sin categoría</option>';
+            selectPago.innerHTML = '<option value="">Seleccionar</option>';
+
+            categorias.forEach(cat => {
+              const option = document.createElement('option');
+              option.value = cat;
+              option.text = cat;
+              selectCat.appendChild(option);
+            });
+
+            mediosPago.forEach(pg => {
+              const option = document.createElement('option');
+              option.value = pg;
+              option.text = pg;
+              selectPago.appendChild(option);
+            });
+
+            selectCat.value = catActual;
+            selectPago.value = pagoActual;
+          }
+        });
+      }
+
+      function calcularTotal(id) {
+        const precio = parseFloat(document.getElementById(`precioUnitario${id}`).value) || 0;
+        const cantidad = parseFloat(document.getElementById(`cantidad${id}`).value) || 0;
+        document.getElementById(`total${id}`).value = (precio * cantidad).toFixed(2);
+        actualizarTotalGeneral();
+      }
+
+      function actualizarTotalGeneral() {
+        let totalGeneral = 0;
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const total = parseFloat(document.getElementById(`total${id}`).value) || 0;
+          totalGeneral += total;
+        });
+        document.getElementById('totalGeneral').textContent = `S/ ${totalGeneral.toFixed(2)}`;
+      }
+
+      function agregarFila() {
+        contadorFilas++;
+        const tbody = document.getElementById('tablaVentasBody');
+        const nuevaFila = document.createElement('tr');
+        nuevaFila.className = 'fila-venta';
+        nuevaFila.setAttribute('data-id', contadorFilas);
+        
+        nuevaFila.innerHTML = `
+          <td class="num-fila">${contadorFilas}</td>
+          <td><select id="categoria${contadorFilas}"></select></td>
+          <td><input type="text" id="producto${contadorFilas}"></td>
+          <td><select id="medioPago${contadorFilas}"></select></td>
+          <td><input type="number" id="precioUnitario${contadorFilas}" step="any" min="0.01" oninput="calcularTotal(${contadorFilas})"></td>
+          <td><input type="number" id="cantidad${contadorFilas}" step="any" min="0.01" value="1" oninput="calcularTotal(${contadorFilas})"></td>
+          <td><input type="text" id="total${contadorFilas}" readonly></td>
+          <td style="text-align: center;">
+            <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(${contadorFilas})">🗑️</button>
+          </td>
+        `;
+        
+        tbody.appendChild(nuevaFila);
+        llenarSelects();
+        
+        // Aplicar medio de pago si hay uno seleccionado
+        if (medioPagoSeleccionado) {
+          const selectPago = document.getElementById(`medioPago${contadorFilas}`);
+          if (selectPago) selectPago.value = medioPagoSeleccionado;
+        }
+      }
+
+      function eliminarFila(id) {
+        const filas = document.querySelectorAll('.fila-venta');
+        if (filas.length <= 1) {
+          alert('Debe haber al menos una fila');
+          return;
+        }
+        
+        const fila = document.querySelector(`[data-id="${id}"]`);
+        if (fila) {
+          fila.remove();
+          renumerarFilas();
+          actualizarTotalGeneral();
+        }
+      }
+
+      function renumerarFilas() {
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach((fila, index) => {
+          const numCell = fila.querySelector('.num-fila');
+          if (numCell) numCell.textContent = index + 1;
+        });
+      }
+
+      function limpiarFormulario() {
+        if (confirm('¿Estás seguro de limpiar todos los campos?')) {
+          document.getElementById('formVentas').reset();
+          
+          // Remover selección de botones
+          document.querySelectorAll('.btn-medio-pago').forEach(btn => {
+            btn.classList.remove('activo');
+          });
+          medioPagoSeleccionado = null;
+          
+          const filas = document.querySelectorAll('.fila-venta');
+          filas.forEach(fila => {
+            const id = fila.getAttribute('data-id');
+            const totalInput = document.getElementById(`total${id}`);
+            const cantidadInput = document.getElementById(`cantidad${id}`);
+            if (totalInput) totalInput.value = '';
+            if (cantidadInput) cantidadInput.value = '1';
+          });
+          
+          actualizarTotalGeneral();
+        }
+      }
+
+      function registrarVentas(e) {
+        e.preventDefault();
+        
+        // =====================================================
+        // VALIDACIÓN DE CAMPOS ALERTA - NUEVA LÓGICA
+        // =====================================================
+        const filas = document.querySelectorAll('.fila-venta');
+        const filasProblematicas = [];
+        const ventas = [];
+        
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const numeroFila = fila.querySelector('.num-fila').textContent;
+          
+          const categoriaEl = document.getElementById(`categoria${id}`);
+          const productoEl = document.getElementById(`producto${id}`);
+          const medioPagoEl = document.getElementById(`medioPago${id}`);
+          const precioUnitarioEl = document.getElementById(`precioUnitario${id}`);
+          const cantidadEl = document.getElementById(`cantidad${id}`);
+          const totalEl = document.getElementById(`total${id}`);
+
+          if (!productoEl || !medioPagoEl) return;
+
+          const categoria = categoriaEl.value;
+          const producto = productoEl.value.trim();
+          const medioPago = medioPagoEl.value;
+          const precioUnitario = precioUnitarioEl.value;
+          const cantidad = cantidadEl.value;
+          const total = totalEl.value;
+
+          // Detectar si tiene "campos alerta" (Producto o Precio)
+          const tieneProducto = producto !== '';
+          const tienePrecio = precioUnitario && parseFloat(precioUnitario) > 0;
+          const tieneMedioPago = medioPago && medioPago !== '';
+          const tieneCantidad = cantidad && parseFloat(cantidad) > 0;
+
+          // Si tiene CAMPO ALERTA (Producto O Precio)
+          if (tieneProducto || tienePrecio) {
+            // Debe tener TODOS los campos obligatorios
+            if (!tieneProducto || !tieneMedioPago || !tienePrecio || !tieneCantidad) {
+              const camposFaltantes = [];
+              if (!tieneProducto) camposFaltantes.push("Producto");
+              if (!tieneMedioPago) camposFaltantes.push("Medio de Pago");
+              if (!tienePrecio) camposFaltantes.push("Precio");
+              if (!tieneCantidad) camposFaltantes.push("Cantidad");
+              
+              filasProblematicas.push({
+                numero: numeroFila,
+                faltantes: camposFaltantes
+              });
+            } else {
+              // Fila completa, agregar a ventas
+              ventas.push({
+                categoria: categoria || '',
+                producto,
+                medioPago,
+                precioUnitario,
+                cantidad,
+                total
+              });
+            }
+          }
+          // Si NO tiene campos alerta, se ignora silenciosamente (OK)
+        });
+
+        // Si hay filas problemáticas, mostrar error y NO enviar
+        if (filasProblematicas.length > 0) {
+          let mensajeError = "⚠️ Hay campos incompletos en las siguientes filas:\n\n";
+          
+          filasProblematicas.forEach(problema => {
+            mensajeError += `Fila ${problema.numero}: Falta(n) ${problema.faltantes.join(', ')}\n`;
+          });
+          
+          mensajeError += "\nPor favor completa todos los campos obligatorios o deja la fila completamente vacía.";
+          
+          mostrarMensaje(mensajeError, "error");
+          return;
+        }
+
+        // Validar que haya al menos una venta válida
+        if (ventas.length === 0) {
+          mostrarMensaje("⚠️ Debes completar al menos una venta (Producto, Medio de Pago, Precio y Cantidad son obligatorios)", "error");
+          return;
+        }
+
+        // =====================================================
+        // ENVÍO AL SERVIDOR (sin cambios)
+        // =====================================================
+        const mensajeDiv = document.getElementById('mensajeExito');
+        mensajeDiv.textContent = "⏳ Guardando...";
+        mensajeDiv.className = "";
+        mensajeDiv.style.display = "block";
+        mensajeDiv.style.background = "#fff3cd";
+        mensajeDiv.style.color = "#856404";
+
+        google.script.run
+          .withSuccessHandler(function(mensaje) {
+            mostrarMensaje(`✅ ${mensaje}`, "ok");
+            document.getElementById('formVentas').reset();
+            
+            // Remover selección de botones
+            document.querySelectorAll('.btn-medio-pago').forEach(btn => {
+              btn.classList.remove('activo');
+            });
+            medioPagoSeleccionado = null;
+            
+            const filas = document.querySelectorAll('.fila-venta');
+            filas.forEach(fila => {
+              const id = fila.getAttribute('data-id');
+              const totalInput = document.getElementById(`total${id}`);
+              const cantidadInput = document.getElementById(`cantidad${id}`);
+              if (totalInput) totalInput.value = '';
+              if (cantidadInput) cantidadInput.value = '1';
+            });
+            
+            actualizarTotalGeneral();
+          })
+          .withFailureHandler(function(error) {
+            mostrarMensaje(`❌ Error: ${error.message}`, "error");
+          })
+          .registrarVentasMultiples(ventas);
+      }
+
+      function mostrarMensaje(texto, tipo) {
+        const mensajeDiv = document.getElementById('mensajeExito');
+        mensajeDiv.textContent = texto;
+        mensajeDiv.className = tipo;
+        mensajeDiv.style.display = "block";
+        setTimeout(() => mensajeDiv.style.display = "none", 5000);
+      }
+
+      window.onload = cargarListas;
+    </script>
+  </head>
+  <body>
+    <!-- BOTÓN HOME -->
+    <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" class="btn-home" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+      <span>🏠</span>
+      <span>Home</span>
+    </a>
+
+    <div class="container">
+      <h2>📊 Registro Múltiple de Ventas</h2>
+      
+      <div class="aplicar-todos">
+        <label>Medio de Pago para todos:</label>
+        <div id="botonesMediosPago" class="botones-medios-pago">
+          <!-- Botones se generan dinámicamente -->
+        </div>
+      </div>
+
+      <form id="formVentas" onsubmit="registrarVentas(event)">
+        <div class="tabla-ventas">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th style="width: 130px;">Categoría</th>
+                <th style="width: 140px;">Producto</th>
+                <th style="width: 120px;">Medio de Pago</th>
+                <th style="width: 100px;">Precio Unit. (S/)</th>
+                <th style="width: 80px;">Cantidad</th>
+                <th style="width: 100px;">Total (S/)</th>
+                <th style="width: 60px;">Eliminar</th>
+              </tr>
+            </thead>
+            <tbody id="tablaVentasBody">
+              <tr class="fila-venta" data-id="1">
+                <td class="num-fila">1</td>
+                <td><select id="categoria1"></select></td>
+                <td><input type="text" id="producto1"></td>
+                <td><select id="medioPago1"></select></td>
+                <td><input type="number" id="precioUnitario1" step="any" min="0.01" oninput="calcularTotal(1)"></td>
+                <td><input type="number" id="cantidad1" step="any" min="0.01" value="1" oninput="calcularTotal(1)"></td>
+                <td><input type="text" id="total1" readonly></td>
+                <td style="text-align: center;">
+                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(1)">🗑️</button>
+                </td>
+              </tr>
+              
+              <tr class="fila-venta" data-id="2">
+                <td class="num-fila">2</td>
+                <td><select id="categoria2"></select></td>
+                <td><input type="text" id="producto2"></td>
+                <td><select id="medioPago2"></select></td>
+                <td><input type="number" id="precioUnitario2" step="any" min="0.01" oninput="calcularTotal(2)"></td>
+                <td><input type="number" id="cantidad2" step="any" min="0.01" value="1" oninput="calcularTotal(2)"></td>
+                <td><input type="text" id="total2" readonly></td>
+                <td style="text-align: center;">
+                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(2)">🗑️</button>
+                </td>
+              </tr>
+              
+              <tr class="fila-venta" data-id="3">
+                <td class="num-fila">3</td>
+                <td><select id="categoria3"></select></td>
+                <td><input type="text" id="producto3"></td>
+                <td><select id="medioPago3"></select></td>
+                <td><input type="number" id="precioUnitario3" step="any" min="0.01" oninput="calcularTotal(3)"></td>
+                <td><input type="number" id="cantidad3" step="any" min="0.01" value="1" oninput="calcularTotal(3)"></td>
+                <td><input type="text" id="total3" readonly></td>
+                <td style="text-align: center;">
+                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(3)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="botones-filas">
+          <button type="button" class="btn-fila btn-agregar" onclick="agregarFila()">+ Agregar otra venta</button>
+        </div>
+
+        <div class="resumen-total">
+          <div class="label">TOTAL GENERAL:</div>
+          <div class="monto" id="totalGeneral">S/ 0.00</div>
+        </div>
+
+        <div class="botones">
+          <button type="submit" class="btn-guardar">💾 Guardar Ventas</button>
+          <button type="button" class="btn-limpiar" onclick="limpiarFormulario()">🗑️ Limpiar Todo</button>
+        </div>
+      </form>
+
+      <div id="mensajeExito"></div>
+    </div>
+  </body>
+</html>
+
+
+// ============================================
+// ARCHIVO 5/6: Univenta.gs
+// URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Univenta.gs
+// ============================================
+
+
+// ERROR: No se pudo obtener el archivo
+// Dirección no disponible: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Univenta.gs
+
+
+// ============================================
+// ARCHIVO 6/6: Univentaw.html
+// URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Univentaw.html
+// ============================================
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Ventas</title>
+    <style>
+      /* ESTILOS GENERALES */
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f0f2f5;
+      }
+
+      /* BOTÓN HOME */
+      .btn-home {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #667eea;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .btn-home:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      .container {
+        max-width: 400px;
+        margin: 80px auto 20px;
+        background: #fff;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      h2 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-top: 10px;
+        color: #333;
+        font-weight: bold;
+      }
+
+      select, input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        background: #007BFF;
+        color: white;
+        padding: 10px;
+        margin-top: 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+
+      #mensaje {
+        text-align: center;
+        color: green;
+        font-weight: bold;
+        margin-top: 15px;
+        display: none;
+      }
+
+      @media (max-width: 480px) {
+        .btn-home {
+          top: 10px;
+          left: 10px;
+          padding: 8px 15px;
+          font-size: 13px;
+        }
+
+        .container {
+          margin: 60px 10px 10px;
+          padding: 15px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- BOTÓN HOME -->
+<a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" class="btn-home" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+  <span>🏠</span>
+  <span>Home</span>
+</a>
+
+    <div class="container">
+      <h2>Registro de Ventas</h2>
+
+      <label for="categoria">Categoría:</label>
+      <select id="categoria"></select>
+
+      <label for="producto">Producto:</label>
+      <input type="text" id="producto" placeholder="Nombre del producto">
+
+      <label for="modoPago">Modo de Pago:</label>
+      <select id="modoPago"></select>
+
+      <label for="precio">Precio Unitario (S/):</label>
+      <input type="number" id="precio" step="0.01" min="0">
+
+      <label for="cantidad">Cantidad:</label>
+      <input type="number" id="cantidad" min="1">
+
+      <label for="total">Total (S/):</label>
+      <input type="text" id="total" readonly>
+
+      <button onclick="registrarVenta()">Registrar venta</button>
+
+      <p id="mensaje"></p>
+    </div>
+
+    <script>
+      // OBTENER URL BASE
+      const baseUrl = window.location.href.split('?')[0];
+
+      // CARGAR DESPLEGABLES
+      google.script.run.withSuccessHandler(cargarCategorias).getCategorias();
+      google.script.run.withSuccessHandler(cargarModosPago).getModosPago();
+
+      function cargarCategorias(data) {
+        const select = document.getElementById("categoria");
+        data.forEach(cat => {
+          const option = document.createElement("option");
+          option.value = cat;
+          option.textContent = cat;
+          select.appendChild(option);
+        });
+      }
+
+      function cargarModosPago(data) {
+        const select = document.getElementById("modoPago");
+        data.forEach(mp => {
+          const option = document.createElement("option");
+          option.value = mp;
+          option.textContent = mp;
+          select.appendChild(option);
+        });
+      }
+
+      // CALCULAR TOTAL EN TIEMPO REAL
+      document.getElementById("precio").addEventListener("input", calcularTotal);
+      document.getElementById("cantidad").addEventListener("input", calcularTotal);
+
+      function calcularTotal() {
+        const precio = parseFloat(document.getElementById("precio").value) || 0;
+        const cantidad = parseFloat(document.getElementById("cantidad").value) || 0;
+        document.getElementById("total").value = (precio * cantidad).toFixed(2);
+      }
+
+      // REGISTRAR VENTA (ENVÍO INSTANTÁNEO)
+      function registrarVenta() {
+        const data = {
+          categoria: document.getElementById("categoria").value,
+          producto: document.getElementById("producto").value,
+          modoPago: document.getElementById("modoPago").value,
+          precio: document.getElementById("precio").value,
+          cantidad: document.getElementById("cantidad").value
+        };
+
+        // Mostrar mensaje inmediato
+        const msg = document.getElementById("mensaje");
+        msg.textContent = "Registro enviado";
+        msg.style.display = "block";
+        msg.style.color = "green";
+
+        // Enviar al servidor sin esperar confirmación
+        google.script.run.registrarVenta(data);
+
+        // Limpiar formulario
+        document.getElementById("producto").value = "";
+        document.getElementById("precio").value = "";
+        document.getElementById("cantidad").value = "";
+        document.getElementById("total").value = "";
+
+        // Ocultar mensaje tras 10 segundos
+        setTimeout(() => msg.style.display = "none", 10000);
+      }
+    </script>
+  </body>
+</html>
+
+
+// ============================================
+// FIN DEL SOLID CODE
+// Tamaño total: 42.812 caracteres
+// ============================================
