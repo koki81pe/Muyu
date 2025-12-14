@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <base target="_top">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+    <title>Registro Múltiple de Ventas</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: #f0f2f5;
+      }
+
+      /* BOTÓN HOME */
+      .btn-home {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: #667eea;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        transition: all 0.3s ease;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-home:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      .container {
+        width: 100%;
+        max-width: 980px;
+        margin: 80px auto 20px;
+        background: #fff;
+        padding: 20px;
+        box-sizing: border-box;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 25px;
+        color: #333;
+        font-size: 1.5rem;
+      }
+
+      .aplicar-todos {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border: 1px solid #dee2e6;
+      }
+
+      .aplicar-todos label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #495057;
+      }
+
+      .botones-medios-pago {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn-medio-pago {
+        padding: 12px 24px;
+        font-size: 17px;
+        border: 3px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+      }
+
+      /* Estilos específicos para cada medio de pago */
+      .btn-medio-pago[data-medio="Efectivo"] {
+        background: #4CAF50;
+        color: #ffffff;
+      }
+
+      .btn-medio-pago[data-medio="Yape"] {
+        background: #9117A0;
+        color: #ffffff;
+      }
+
+      .btn-medio-pago[data-medio="Tarjeta"] {
+        background: #3498db;
+        color: #ffffff;
+      }
+
+      .btn-medio-pago:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      .btn-medio-pago.activo {
+        border: 4px solid #000;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        transform: scale(1.05);
+      }
+
+      .tabla-ventas {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 15px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 750px;
+      }
+
+      th {
+        background: #1a73e8;
+        color: white;
+        padding: 12px 8px;
+        text-align: left;
+        font-size: 14px;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      td {
+        padding: 8px;
+        border-bottom: 1px solid #e0e0e0;
+      }
+
+      input, select {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
+      }
+
+      input[type="number"] {
+        text-align: right;
+      }
+
+      input[readonly] {
+        background: #f5f5f5;
+        cursor: not-allowed;
+      }
+
+      .fila-venta:hover {
+        background: #f9f9f9;
+      }
+
+      .btn-eliminar-fila {
+        background: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      .btn-eliminar-fila:hover {
+        background: #c82333;
+        transform: scale(1.1);
+      }
+
+      .botones-filas {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+        justify-content: center;
+      }
+
+      .btn-fila {
+        padding: 10px 20px;
+        font-size: 14px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .btn-agregar {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .btn-agregar:hover {
+        background-color: #218838;
+      }
+
+      .resumen-total {
+        text-align: right;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #e7f3ff;
+        border-radius: 8px;
+        border-left: 4px solid #1a73e8;
+      }
+
+      .resumen-total .label {
+        font-size: 14px;
+        color: #495057;
+        font-weight: 600;
+      }
+
+      .resumen-total .monto {
+        font-size: 24px;
+        color: #1a73e8;
+        font-weight: bold;
+        margin-top: 5px;
+      }
+
+      .botones {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        flex: 1;
+        min-width: 150px;
+        padding: 16px;
+        font-size: 18px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .btn-guardar {
+        background-color: #1a73e8;
+        color: white;
+      }
+
+      .btn-guardar:hover {
+        background-color: #1765c1;
+      }
+
+      .btn-limpiar {
+        background-color: #5f6368;
+        color: white;
+      }
+
+      .btn-limpiar:hover {
+        background-color: #4a4d51;
+      }
+
+      #mensajeExito {
+        margin-top: 15px;
+        padding: 15px;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        border-radius: 8px;
+        display: none;
+      }
+
+      .ok {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+      }
+
+      .error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+      }
+
+      @media (max-width: 768px) {
+        .btn-home {
+          top: 10px;
+          left: 10px;
+          padding: 8px 15px;
+          font-size: 13px;
+        }
+
+        .container {
+          margin: 60px 10px 10px;
+          padding: 15px;
+        }
+
+        h2 {
+          font-size: 1.3rem;
+        }
+
+        .aplicar-todos {
+          padding: 10px;
+        }
+
+        .botones-medios-pago {
+          gap: 8px;
+        }
+
+        .btn-medio-pago {
+          padding: 10px 18px;
+          font-size: 15px;
+        }
+
+        th, td {
+          font-size: 12px;
+          padding: 6px 4px;
+        }
+
+        input, select {
+          padding: 6px;
+          font-size: 13px;
+        }
+
+        button {
+          font-size: 16px;
+          padding: 14px;
+        }
+
+        .resumen-total .monto {
+          font-size: 20px;
+        }
+
+        table {
+          min-width: 650px;
+        }
+      }
+    </style>
+    <script>
+      let categorias = [];
+      let mediosPago = [];
+      let contadorFilas = 3;
+      let medioPagoSeleccionado = null;
+
+      function cargarListas() {
+        google.script.run.withSuccessHandler(function(cats) {
+          categorias = cats;
+          llenarSelects();
+        }).getCategorias();
+
+        google.script.run.withSuccessHandler(function(pagos) {
+          mediosPago = pagos;
+          llenarSelects();
+          crearBotonesMediosPago();
+        }).getMediosPago();
+      }
+
+      function crearBotonesMediosPago() {
+        if (mediosPago.length === 0) return;
+
+        const contenedor = document.getElementById('botonesMediosPago');
+        contenedor.innerHTML = '';
+
+        mediosPago.forEach(medio => {
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'btn-medio-pago';
+          boton.setAttribute('data-medio', medio);
+          boton.textContent = medio;
+          boton.onclick = () => seleccionarMedioPago(medio, boton);
+          contenedor.appendChild(boton);
+        });
+      }
+
+      function seleccionarMedioPago(medio, botonClickeado) {
+        // Remover clase activo de todos los botones
+        document.querySelectorAll('.btn-medio-pago').forEach(btn => {
+          btn.classList.remove('activo');
+        });
+
+        // Activar el botón clickeado
+        botonClickeado.classList.add('activo');
+        medioPagoSeleccionado = medio;
+
+        // Aplicar a todas las filas
+        aplicarMedioPagoATodos();
+      }
+
+      function aplicarMedioPagoATodos() {
+        if (!medioPagoSeleccionado) return;
+
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const select = document.getElementById(`medioPago${id}`);
+          if (select) {
+            select.value = medioPagoSeleccionado;
+          }
+        });
+      }
+
+      function llenarSelects() {
+        if (categorias.length === 0 || mediosPago.length === 0) return;
+
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const selectCat = document.getElementById(`categoria${id}`);
+          const selectPago = document.getElementById(`medioPago${id}`);
+
+          if (selectCat && selectPago) {
+            const catActual = selectCat.value;
+            const pagoActual = selectPago.value;
+
+            selectCat.innerHTML = '<option value="">Sin categoría</option>';
+            selectPago.innerHTML = '<option value="">Seleccionar</option>';
+
+            categorias.forEach(cat => {
+              const option = document.createElement('option');
+              option.value = cat;
+              option.text = cat;
+              selectCat.appendChild(option);
+            });
+
+            mediosPago.forEach(pg => {
+              const option = document.createElement('option');
+              option.value = pg;
+              option.text = pg;
+              selectPago.appendChild(option);
+            });
+
+            selectCat.value = catActual;
+            selectPago.value = pagoActual;
+          }
+        });
+      }
+
+      function calcularTotal(id) {
+        const precio = parseFloat(document.getElementById(`precioUnitario${id}`).value) || 0;
+        const cantidad = parseFloat(document.getElementById(`cantidad${id}`).value) || 0;
+        document.getElementById(`total${id}`).value = (precio * cantidad).toFixed(2);
+        actualizarTotalGeneral();
+      }
+
+      function actualizarTotalGeneral() {
+        let totalGeneral = 0;
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const total = parseFloat(document.getElementById(`total${id}`).value) || 0;
+          totalGeneral += total;
+        });
+        document.getElementById('totalGeneral').textContent = `S/ ${totalGeneral.toFixed(2)}`;
+      }
+
+      function agregarFila() {
+        contadorFilas++;
+        const tbody = document.getElementById('tablaVentasBody');
+        const nuevaFila = document.createElement('tr');
+        nuevaFila.className = 'fila-venta';
+        nuevaFila.setAttribute('data-id', contadorFilas);
+        
+        nuevaFila.innerHTML = `
+          <td class="num-fila">${contadorFilas}</td>
+          <td><select id="categoria${contadorFilas}"></select></td>
+          <td><input type="text" id="producto${contadorFilas}"></td>
+          <td><select id="medioPago${contadorFilas}"></select></td>
+          <td><input type="number" id="precioUnitario${contadorFilas}" step="any" min="0.01" oninput="calcularTotal(${contadorFilas})"></td>
+          <td><input type="number" id="cantidad${contadorFilas}" step="any" min="0.01" value="1" oninput="calcularTotal(${contadorFilas})"></td>
+          <td><input type="text" id="total${contadorFilas}" readonly></td>
+          <td style="text-align: center;">
+            <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(${contadorFilas})">🗑️</button>
+          </td>
+        `;
+        
+        tbody.appendChild(nuevaFila);
+        llenarSelects();
+        
+        // Aplicar medio de pago si hay uno seleccionado
+        if (medioPagoSeleccionado) {
+          const selectPago = document.getElementById(`medioPago${contadorFilas}`);
+          if (selectPago) selectPago.value = medioPagoSeleccionado;
+        }
+      }
+
+      function eliminarFila(id) {
+        const filas = document.querySelectorAll('.fila-venta');
+        if (filas.length <= 1) {
+          alert('Debe haber al menos una fila');
+          return;
+        }
+        
+        const fila = document.querySelector(`[data-id="${id}"]`);
+        if (fila) {
+          fila.remove();
+          renumerarFilas();
+          actualizarTotalGeneral();
+        }
+      }
+
+      function renumerarFilas() {
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach((fila, index) => {
+          const numCell = fila.querySelector('.num-fila');
+          if (numCell) numCell.textContent = index + 1;
+        });
+      }
+
+      function limpiarFormulario() {
+        if (confirm('¿Estás seguro de limpiar todos los campos?')) {
+          document.getElementById('formVentas').reset();
+          
+          // Remover selección de botones
+          document.querySelectorAll('.btn-medio-pago').forEach(btn => {
+            btn.classList.remove('activo');
+          });
+          medioPagoSeleccionado = null;
+          
+          const filas = document.querySelectorAll('.fila-venta');
+          filas.forEach(fila => {
+            const id = fila.getAttribute('data-id');
+            const totalInput = document.getElementById(`total${id}`);
+            const cantidadInput = document.getElementById(`cantidad${id}`);
+            if (totalInput) totalInput.value = '';
+            if (cantidadInput) cantidadInput.value = '1';
+          });
+          
+          actualizarTotalGeneral();
+        }
+      }
+
+      function registrarVentas(e) {
+        e.preventDefault();
+        
+        // =====================================================
+        // VALIDACIÓN DE CAMPOS ALERTA - NUEVA LÓGICA
+        // =====================================================
+        const filas = document.querySelectorAll('.fila-venta');
+        const filasProblematicas = [];
+        const ventas = [];
+        
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const numeroFila = fila.querySelector('.num-fila').textContent;
+          
+          const categoriaEl = document.getElementById(`categoria${id}`);
+          const productoEl = document.getElementById(`producto${id}`);
+          const medioPagoEl = document.getElementById(`medioPago${id}`);
+          const precioUnitarioEl = document.getElementById(`precioUnitario${id}`);
+          const cantidadEl = document.getElementById(`cantidad${id}`);
+          const totalEl = document.getElementById(`total${id}`);
+
+          if (!productoEl || !medioPagoEl) return;
+
+          const categoria = categoriaEl.value;
+          const producto = productoEl.value.trim();
+          const medioPago = medioPagoEl.value;
+          const precioUnitario = precioUnitarioEl.value;
+          const cantidad = cantidadEl.value;
+          const total = totalEl.value;
+
+          // Detectar si tiene "campos alerta" (Producto o Precio)
+          const tieneProducto = producto !== '';
+          const tienePrecio = precioUnitario && parseFloat(precioUnitario) > 0;
+          const tieneMedioPago = medioPago && medioPago !== '';
+          const tieneCantidad = cantidad && parseFloat(cantidad) > 0;
+
+          // Si tiene CAMPO ALERTA (Producto O Precio)
+          if (tieneProducto || tienePrecio) {
+            // Debe tener TODOS los campos obligatorios
+            if (!tieneProducto || !tieneMedioPago || !tienePrecio || !tieneCantidad) {
+              const camposFaltantes = [];
+              if (!tieneProducto) camposFaltantes.push("Producto");
+              if (!tieneMedioPago) camposFaltantes.push("Medio de Pago");
+              if (!tienePrecio) camposFaltantes.push("Precio");
+              if (!tieneCantidad) camposFaltantes.push("Cantidad");
+              
+              filasProblematicas.push({
+                numero: numeroFila,
+                faltantes: camposFaltantes
+              });
+            } else {
+              // Fila completa, agregar a ventas
+              ventas.push({
+                categoria: categoria || '',
+                producto,
+                medioPago,
+                precioUnitario,
+                cantidad,
+                total
+              });
+            }
+          }
+          // Si NO tiene campos alerta, se ignora silenciosamente (OK)
+        });
+
+        // Si hay filas problemáticas, mostrar error y NO enviar
+        if (filasProblematicas.length > 0) {
+          let mensajeError = "⚠️ Hay campos incompletos en las siguientes filas:\n\n";
+          
+          filasProblematicas.forEach(problema => {
+            mensajeError += `Fila ${problema.numero}: Falta(n) ${problema.faltantes.join(', ')}\n`;
+          });
+          
+          mensajeError += "\nPor favor completa todos los campos obligatorios o deja la fila completamente vacía.";
+          
+          mostrarMensaje(mensajeError, "error");
+          return;
+        }
+
+        // Validar que haya al menos una venta válida
+        if (ventas.length === 0) {
+          mostrarMensaje("⚠️ Debes completar al menos una venta (Producto, Medio de Pago, Precio y Cantidad son obligatorios)", "error");
+          return;
+        }
+
+        // =====================================================
+        // ENVÍO AL SERVIDOR (sin cambios)
+        // =====================================================
+        const mensajeDiv = document.getElementById('mensajeExito');
+        mensajeDiv.textContent = "⏳ Guardando...";
+        mensajeDiv.className = "";
+        mensajeDiv.style.display = "block";
+        mensajeDiv.style.background = "#fff3cd";
+        mensajeDiv.style.color = "#856404";
+
+        google.script.run
+          .withSuccessHandler(function(mensaje) {
+            mostrarMensaje(`✅ ${mensaje}`, "ok");
+            document.getElementById('formVentas').reset();
+            
+            // Remover selección de botones
+            document.querySelectorAll('.btn-medio-pago').forEach(btn => {
+              btn.classList.remove('activo');
+            });
+            medioPagoSeleccionado = null;
+            
+            const filas = document.querySelectorAll('.fila-venta');
+            filas.forEach(fila => {
+              const id = fila.getAttribute('data-id');
+              const totalInput = document.getElementById(`total${id}`);
+              const cantidadInput = document.getElementById(`cantidad${id}`);
+              if (totalInput) totalInput.value = '';
+              if (cantidadInput) cantidadInput.value = '1';
+            });
+            
+            actualizarTotalGeneral();
+          })
+          .withFailureHandler(function(error) {
+            mostrarMensaje(`❌ Error: ${error.message}`, "error");
+          })
+          .registrarVentasMultiples(ventas);
+      }
+
+      function mostrarMensaje(texto, tipo) {
+        const mensajeDiv = document.getElementById('mensajeExito');
+        mensajeDiv.textContent = texto;
+        mensajeDiv.className = tipo;
+        mensajeDiv.style.display = "block";
+        setTimeout(() => mensajeDiv.style.display = "none", 5000);
+      }
+
+      window.onload = cargarListas;
+    </script>
+  </head>
+  <body>
+    <!-- BOTÓN HOME -->
+    <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" class="btn-home" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+      <span>🏠</span>
+      <span>Home</span>
+    </a>
+
+    <div class="container">
+      <h2>📊 Registro Múltiple de Ventas</h2>
+      
+      <div class="aplicar-todos">
+        <label>Medio de Pago para todos:</label>
+        <div id="botonesMediosPago" class="botones-medios-pago">
+          <!-- Botones se generan dinámicamente -->
+        </div>
+      </div>
+
+      <form id="formVentas" onsubmit="registrarVentas(event)">
+        <div class="tabla-ventas">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th style="width: 130px;">Categoría</th>
+                <th style="width: 140px;">Producto</th>
+                <th style="width: 120px;">Medio de Pago</th>
+                <th style="width: 100px;">Precio Unit. (S/)</th>
+                <th style="width: 80px;">Cantidad</th>
+                <th style="width: 100px;">Total (S/)</th>
+                <th style="width: 60px;">Eliminar</th>
+              </tr>
+            </thead>
+            <tbody id="tablaVentasBody">
+              <tr class="fila-venta" data-id="1">
+                <td class="num-fila">1</td>
+                <td><select id="categoria1"></select></td>
+                <td><input type="text" id="producto1"></td>
+                <td><select id="medioPago1"></select></td>
+                <td><input type="number" id="precioUnitario1" step="any" min="0.01" oninput="calcularTotal(1)"></td>
+                <td><input type="number" id="cantidad1" step="any" min="0.01" value="1" oninput="calcularTotal(1)"></td>
+                <td><input type="text" id="total1" readonly></td>
+                <td style="text-align: center;">
+                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(1)">🗑️</button>
+                </td>
+              </tr>
+              
+              <tr class="fila-venta" data-id="2">
+                <td class="num-fila">2</td>
+                <td><select id="categoria2"></select></td>
+                <td><input type="text" id="producto2"></td>
+                <td><select id="medioPago2"></select></td>
+                <td><input type="number" id="precioUnitario2" step="any" min="0.01" oninput="calcularTotal(2)"></td>
+                <td><input type="number" id="cantidad2" step="any" min="0.01" value="1" oninput="calcularTotal(2)"></td>
+                <td><input type="text" id="total2" readonly></td>
+                <td style="text-align: center;">
+                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(2)">🗑️</button>
+                </td>
+              </tr>
+              
+              <tr class="fila-venta" data-id="3">
+                <td class="num-fila">3</td>
+                <td><select id="categoria3"></select></td>
+                <td><input type="text" id="producto3"></td>
+                <td><select id="medioPago3"></select></td>
+                <td><input type="number" id="precioUnitario3" step="any" min="0.01" oninput="calcularTotal(3)"></td>
+                <td><input type="number" id="cantidad3" step="any" min="0.01" value="1" oninput="calcularTotal(3)"></td>
+                <td><input type="text" id="total3" readonly></td>
+                <td style="text-align: center;">
+                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(3)">🗑️</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="botones-filas">
+          <button type="button" class="btn-fila btn-agregar" onclick="agregarFila()">+ Agregar otra venta</button>
+        </div>
+
+        <div class="resumen-total">
+          <div class="label">TOTAL GENERAL:</div>
+          <div class="monto" id="totalGeneral">S/ 0.00</div>
+        </div>
+
+        <div class="botones">
+          <button type="submit" class="btn-guardar">💾 Guardar Ventas</button>
+          <button type="button" class="btn-limpiar" onclick="limpiarFormulario()">🗑️ Limpiar Todo</button>
+        </div>
+      </form>
+
+      <div id="mensajeExito"></div>
+    </div>
+  </body>
+</html>
