@@ -42,7 +42,7 @@
 
       .container {
         width: 100%;
-        max-width: 980px;
+        max-width: 820px;
         margin: 80px auto 20px;
         background: #fff;
         padding: 20px;
@@ -58,31 +58,84 @@
         font-size: 1.5rem;
       }
 
+      /* SECCIONES DE BOTONES */
       .aplicar-todos {
         background: #f8f9fa;
-        padding: 15px;
+        padding: 12px;
         border-radius: 8px;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         border: 1px solid #dee2e6;
       }
 
       .aplicar-todos label {
         display: block;
         font-weight: 600;
-        margin-bottom: 10px;
-        font-size: 14px;
+        margin-bottom: 8px;
+        font-size: 13px;
         color: #495057;
+      }
+
+      /* BOTONES DE CATEGORÍA - LAYOUT EQUILIBRADO */
+      .botones-categoria {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 8px;
+        justify-items: center;
       }
 
       .botones-medios-pago {
         display: flex;
-        gap: 10px;
+        gap: 8px;
         flex-wrap: wrap;
+        justify-content: center;
       }
 
+      /* BOTONES DE CATEGORÍA - COLORES DIVERSOS */
+      .btn-categoria {
+        padding: 8px 14px;
+        font-size: 14px;
+        border: 3px solid transparent;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: bold;
+        color: #ffffff;
+        min-width: 90px;
+        text-align: center;
+      }
+
+      /* Colores específicos por índice */
+      .btn-categoria:nth-child(1) { background: #e74c3c; } /* Rojo */
+      .btn-categoria:nth-child(2) { background: #3498db; } /* Azul */
+      .btn-categoria:nth-child(3) { background: #2ecc71; } /* Verde */
+      .btn-categoria:nth-child(4) { background: #9b59b6; } /* Púrpura */
+      .btn-categoria:nth-child(5) { background: #f39c12; } /* Naranja */
+      .btn-categoria:nth-child(6) { background: #1abc9c; } /* Turquesa */
+      .btn-categoria:nth-child(7) { background: #e67e22; } /* Naranja oscuro */
+      .btn-categoria:nth-child(8) { background: #34495e; } /* Gris oscuro */
+      .btn-categoria:nth-child(9) { background: #16a085; } /* Verde azulado */
+      .btn-categoria:nth-child(10) { background: #c0392b; } /* Rojo oscuro */
+      .btn-categoria:nth-child(11) { background: #8e44ad; } /* Púrpura oscuro */
+      .btn-categoria:nth-child(12) { background: #2980b9; } /* Azul oscuro */
+      .btn-categoria:nth-child(13) { background: #27ae60; } /* Verde oscuro */
+      .btn-categoria:nth-child(14) { background: #d35400; } /* Naranja quemado */
+      .btn-categoria:nth-child(15) { background: #7f8c8d; } /* Gris */
+
+      .btn-categoria:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      }
+
+      .btn-categoria.activo {
+        border: 4px solid #000;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        transform: scale(1.05);
+      }
+
+      /* BOTONES DE MEDIO DE PAGO */
       .btn-medio-pago {
-        padding: 12px 24px;
-        font-size: 17px;
+        padding: 10px 20px;
+        font-size: 15px;
         border: 3px solid transparent;
         border-radius: 6px;
         cursor: pointer;
@@ -126,30 +179,48 @@
       table {
         width: 100%;
         border-collapse: collapse;
-        min-width: 750px;
+        table-layout: fixed;
       }
 
       th {
         background: #1a73e8;
         color: white;
-        padding: 12px 8px;
-        text-align: left;
-        font-size: 14px;
+        padding: 10px 4px;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 13px;
         font-weight: 600;
         position: sticky;
         top: 0;
         z-index: 10;
       }
 
+      /* Anchos específicos de columnas */
+      th:nth-child(1) { width: 30px; } /* # */
+      th:nth-child(2) { width: 100px; } /* Categoría */
+      th:nth-child(3) { width: 140px; } /* Producto */
+      th:nth-child(4) { width: 80px; } /* Medio de Pago */
+      th:nth-child(5) { width: 75px; } /* Precio */
+      th:nth-child(6) { width: 50px; } /* Cant */
+      th:nth-child(7) { width: 85px; } /* Total */
+      th:nth-child(8) { width: 45px; padding: 10px 0 !important; } /* Borrar */
+
       td {
-        padding: 8px;
+        padding: 6px 4px;
         border-bottom: 1px solid #e0e0e0;
+      }
+
+      /* Ancho específico para celda Borrar */
+      td:nth-child(8) {
+        width: 45px !important;
+        text-align: center;
+        padding: 4px 0 !important;
       }
 
       input, select {
         width: 100%;
-        padding: 8px;
-        font-size: 14px;
+        padding: 6px 4px;
+        font-size: 13px;
         border: 1px solid #ccc;
         border-radius: 6px;
         box-sizing: border-box;
@@ -172,16 +243,20 @@
         background: #dc3545;
         color: white;
         border: none;
-        padding: 6px 12px;
-        border-radius: 6px;
+        padding: 0;
+        border-radius: 4px;
         cursor: pointer;
-        font-size: 16px;
-        transition: all 0.3s ease;
+        font-size: 20px;
+        text-decoration: none;
+        width: 40px;
+        height: 28px;
+        display: inline-block;
+        text-align: center;
+        line-height: 28px;
       }
 
       .btn-eliminar-fila:hover {
         background: #c82333;
-        transform: scale(1.1);
       }
 
       .botones-filas {
@@ -301,6 +376,7 @@
         .container {
           margin: 60px 10px 10px;
           padding: 15px;
+          max-width: 100%;
         }
 
         h2 {
@@ -311,23 +387,34 @@
           padding: 10px;
         }
 
+        .botones-categoria {
+          grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+          gap: 6px;
+        }
+
+        .btn-categoria {
+          padding: 7px 10px;
+          font-size: 13px;
+          min-width: 70px;
+        }
+
         .botones-medios-pago {
-          gap: 8px;
+          gap: 6px;
         }
 
         .btn-medio-pago {
-          padding: 10px 18px;
-          font-size: 15px;
+          padding: 8px 16px;
+          font-size: 14px;
         }
 
         th, td {
-          font-size: 12px;
-          padding: 6px 4px;
+          font-size: 11px;
+          padding: 5px 2px;
         }
 
         input, select {
-          padding: 6px;
-          font-size: 13px;
+          padding: 4px 2px;
+          font-size: 12px;
         }
 
         button {
@@ -339,15 +426,20 @@
           font-size: 20px;
         }
 
-        table {
-          min-width: 650px;
+        .btn-eliminar-fila {
+          width: 35px;
+          height: 24px;
+          font-size: 18px;
+          line-height: 24px;
         }
       }
     </style>
     <script>
       let categorias = [];
+      let categoriasBoton = [];
       let mediosPago = [];
       let contadorFilas = 3;
+      let categoriaSeleccionada = null;
       let medioPagoSeleccionado = null;
 
       function cargarListas() {
@@ -356,11 +448,57 @@
           llenarSelects();
         }).getCategorias();
 
+        google.script.run.withSuccessHandler(function(catsBoton) {
+          categoriasBoton = catsBoton;
+          crearBotonesCategorias();
+        }).getCategoriasBoton();
+
         google.script.run.withSuccessHandler(function(pagos) {
           mediosPago = pagos;
           llenarSelects();
           crearBotonesMediosPago();
         }).getMediosPago();
+      }
+
+      function crearBotonesCategorias() {
+        if (categoriasBoton.length === 0) return;
+
+        const contenedor = document.getElementById('botonesCategoria');
+        contenedor.innerHTML = '';
+
+        categoriasBoton.forEach(item => {
+          const boton = document.createElement('button');
+          boton.type = 'button';
+          boton.className = 'btn-categoria';
+          boton.setAttribute('data-categoria', item.categoria);
+          boton.textContent = item.boton;
+          boton.onclick = () => seleccionarCategoria(item.categoria, boton);
+          contenedor.appendChild(boton);
+        });
+      }
+
+      function seleccionarCategoria(categoria, botonClickeado) {
+        document.querySelectorAll('.btn-categoria').forEach(btn => {
+          btn.classList.remove('activo');
+        });
+
+        botonClickeado.classList.add('activo');
+        categoriaSeleccionada = categoria;
+
+        aplicarCategoriaATodos();
+      }
+
+      function aplicarCategoriaATodos() {
+        if (!categoriaSeleccionada) return;
+
+        const filas = document.querySelectorAll('.fila-venta');
+        filas.forEach(fila => {
+          const id = fila.getAttribute('data-id');
+          const select = document.getElementById(`categoria${id}`);
+          if (select) {
+            select.value = categoriaSeleccionada;
+          }
+        });
       }
 
       function crearBotonesMediosPago() {
@@ -381,16 +519,13 @@
       }
 
       function seleccionarMedioPago(medio, botonClickeado) {
-        // Remover clase activo de todos los botones
         document.querySelectorAll('.btn-medio-pago').forEach(btn => {
           btn.classList.remove('activo');
         });
 
-        // Activar el botón clickeado
         botonClickeado.classList.add('activo');
         medioPagoSeleccionado = medio;
 
-        // Aplicar a todas las filas
         aplicarMedioPagoATodos();
       }
 
@@ -469,7 +604,7 @@
         nuevaFila.setAttribute('data-id', contadorFilas);
         
         nuevaFila.innerHTML = `
-          <td class="num-fila">${contadorFilas}</td>
+          <td class="num-fila" style="text-align: center;">${contadorFilas}</td>
           <td><select id="categoria${contadorFilas}"></select></td>
           <td><input type="text" id="producto${contadorFilas}"></td>
           <td><select id="medioPago${contadorFilas}"></select></td>
@@ -477,14 +612,18 @@
           <td><input type="number" id="cantidad${contadorFilas}" step="any" min="0.01" value="1" oninput="calcularTotal(${contadorFilas})"></td>
           <td><input type="text" id="total${contadorFilas}" readonly></td>
           <td style="text-align: center;">
-            <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(${contadorFilas})">🗑️</button>
+            <a href="javascript:void(0)" class="btn-eliminar-fila" onclick="eliminarFila(${contadorFilas})">🗑️</a>
           </td>
         `;
         
         tbody.appendChild(nuevaFila);
         llenarSelects();
         
-        // Aplicar medio de pago si hay uno seleccionado
+        if (categoriaSeleccionada) {
+          const selectCat = document.getElementById(`categoria${contadorFilas}`);
+          if (selectCat) selectCat.value = categoriaSeleccionada;
+        }
+        
         if (medioPagoSeleccionado) {
           const selectPago = document.getElementById(`medioPago${contadorFilas}`);
           if (selectPago) selectPago.value = medioPagoSeleccionado;
@@ -518,7 +657,11 @@
         if (confirm('¿Estás seguro de limpiar todos los campos?')) {
           document.getElementById('formVentas').reset();
           
-          // Remover selección de botones
+          document.querySelectorAll('.btn-categoria').forEach(btn => {
+            btn.classList.remove('activo');
+          });
+          categoriaSeleccionada = null;
+          
           document.querySelectorAll('.btn-medio-pago').forEach(btn => {
             btn.classList.remove('activo');
           });
@@ -540,9 +683,6 @@
       function registrarVentas(e) {
         e.preventDefault();
         
-        // =====================================================
-        // VALIDACIÓN DE CAMPOS ALERTA - NUEVA LÓGICA
-        // =====================================================
         const filas = document.querySelectorAll('.fila-venta');
         const filasProblematicas = [];
         const ventas = [];
@@ -567,15 +707,12 @@
           const cantidad = cantidadEl.value;
           const total = totalEl.value;
 
-          // Detectar si tiene "campos alerta" (Producto o Precio)
           const tieneProducto = producto !== '';
           const tienePrecio = precioUnitario && parseFloat(precioUnitario) > 0;
           const tieneMedioPago = medioPago && medioPago !== '';
           const tieneCantidad = cantidad && parseFloat(cantidad) > 0;
 
-          // Si tiene CAMPO ALERTA (Producto O Precio)
           if (tieneProducto || tienePrecio) {
-            // Debe tener TODOS los campos obligatorios
             if (!tieneProducto || !tieneMedioPago || !tienePrecio || !tieneCantidad) {
               const camposFaltantes = [];
               if (!tieneProducto) camposFaltantes.push("Producto");
@@ -588,7 +725,6 @@
                 faltantes: camposFaltantes
               });
             } else {
-              // Fila completa, agregar a ventas
               ventas.push({
                 categoria: categoria || '',
                 producto,
@@ -599,10 +735,8 @@
               });
             }
           }
-          // Si NO tiene campos alerta, se ignora silenciosamente (OK)
         });
 
-        // Si hay filas problemáticas, mostrar error y NO enviar
         if (filasProblematicas.length > 0) {
           let mensajeError = "⚠️ Hay campos incompletos en las siguientes filas:\n\n";
           
@@ -616,15 +750,11 @@
           return;
         }
 
-        // Validar que haya al menos una venta válida
         if (ventas.length === 0) {
           mostrarMensaje("⚠️ Debes completar al menos una venta (Producto, Medio de Pago, Precio y Cantidad son obligatorios)", "error");
           return;
         }
 
-        // =====================================================
-        // ENVÍO AL SERVIDOR (sin cambios)
-        // =====================================================
         const mensajeDiv = document.getElementById('mensajeExito');
         mensajeDiv.textContent = "⏳ Guardando...";
         mensajeDiv.className = "";
@@ -637,7 +767,11 @@
             mostrarMensaje(`✅ ${mensaje}`, "ok");
             document.getElementById('formVentas').reset();
             
-            // Remover selección de botones
+            document.querySelectorAll('.btn-categoria').forEach(btn => {
+              btn.classList.remove('activo');
+            });
+            categoriaSeleccionada = null;
+            
             document.querySelectorAll('.btn-medio-pago').forEach(btn => {
               btn.classList.remove('activo');
             });
@@ -672,7 +806,6 @@
     </script>
   </head>
   <body>
-    <!-- BOTÓN HOME -->
     <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" class="btn-home" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
       <span>🏠</span>
       <span>Home</span>
@@ -682,9 +815,14 @@
       <h2>📊 Registro Múltiple de Ventas</h2>
       
       <div class="aplicar-todos">
+        <label>Categoría para todos:</label>
+        <div id="botonesCategoria" class="botones-categoria">
+        </div>
+      </div>
+
+      <div class="aplicar-todos">
         <label>Medio de Pago para todos:</label>
         <div id="botonesMediosPago" class="botones-medios-pago">
-          <!-- Botones se generan dinámicamente -->
         </div>
       </div>
 
@@ -693,19 +831,19 @@
           <table>
             <thead>
               <tr>
-                <th style="width: 40px;">#</th>
-                <th style="width: 130px;">Categoría</th>
-                <th style="width: 140px;">Producto</th>
-                <th style="width: 120px;">Medio de Pago</th>
-                <th style="width: 100px;">Precio Unit. (S/)</th>
-                <th style="width: 80px;">Cantidad</th>
-                <th style="width: 100px;">Total (S/)</th>
-                <th style="width: 60px;">Eliminar</th>
+                <th>#</th>
+                <th>Categoría</th>
+                <th>Producto</th>
+                <th>Medio de<br>Pago</th>
+                <th>Precio</th>
+                <th>Cant</th>
+                <th>Total (S/)</th>
+                <th>Borrar</th>
               </tr>
             </thead>
             <tbody id="tablaVentasBody">
               <tr class="fila-venta" data-id="1">
-                <td class="num-fila">1</td>
+                <td class="num-fila" style="text-align: center;">1</td>
                 <td><select id="categoria1"></select></td>
                 <td><input type="text" id="producto1"></td>
                 <td><select id="medioPago1"></select></td>
@@ -713,12 +851,12 @@
                 <td><input type="number" id="cantidad1" step="any" min="0.01" value="1" oninput="calcularTotal(1)"></td>
                 <td><input type="text" id="total1" readonly></td>
                 <td style="text-align: center;">
-                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(1)">🗑️</button>
+                  <a href="javascript:void(0)" class="btn-eliminar-fila" onclick="eliminarFila(1)">🗑️</a>
                 </td>
               </tr>
               
               <tr class="fila-venta" data-id="2">
-                <td class="num-fila">2</td>
+                <td class="num-fila" style="text-align: center;">2</td>
                 <td><select id="categoria2"></select></td>
                 <td><input type="text" id="producto2"></td>
                 <td><select id="medioPago2"></select></td>
@@ -726,12 +864,12 @@
                 <td><input type="number" id="cantidad2" step="any" min="0.01" value="1" oninput="calcularTotal(2)"></td>
                 <td><input type="text" id="total2" readonly></td>
                 <td style="text-align: center;">
-                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(2)">🗑️</button>
+                  <a href="javascript:void(0)" class="btn-eliminar-fila" onclick="eliminarFila(2)">🗑️</a>
                 </td>
               </tr>
               
               <tr class="fila-venta" data-id="3">
-                <td class="num-fila">3</td>
+                <td class="num-fila" style="text-align: center;">3</td>
                 <td><select id="categoria3"></select></td>
                 <td><input type="text" id="producto3"></td>
                 <td><select id="medioPago3"></select></td>
@@ -739,7 +877,7 @@
                 <td><input type="number" id="cantidad3" step="any" min="0.01" value="1" oninput="calcularTotal(3)"></td>
                 <td><input type="text" id="total3" readonly></td>
                 <td style="text-align: center;">
-                  <button type="button" class="btn-eliminar-fila" onclick="eliminarFila(3)">🗑️</button>
+                  <a href="javascript:void(0)" class="btn-eliminar-fila" onclick="eliminarFila(3)">🗑️</a>
                 </td>
               </tr>
             </tbody>
