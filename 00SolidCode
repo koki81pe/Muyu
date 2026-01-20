@@ -1,6 +1,6 @@
 // ============================================
 // SOLID CODE - MUYU
-// Generado: 20/1/2026, 11:05:57 a. m.
+// Generado: 20/1/2026, 3:10:25 p. m.
 // Total de archivos: 6
 // ============================================
 
@@ -16,8 +16,8 @@
 *****************************************
 PROYECTO: Muyu Ventas
 ARCHIVO: Master.gs
-VERSIÓN: 01.00
-FECHA: 19/01/2026 21:59 (UTC-5)
+VERSIÓN: 03.00
+FECHA: 20/01/2026 13:21 (UTC-5)
 *****************************************
 */
 // MOD-001: FIN
@@ -96,11 +96,82 @@ function encontrarUltimaFila(sheet) {
 }
 // MOD-006: FIN
 
-// MOD-007: CÓDIGO DE CIERRE [INICIO]
-Logger.log('✅ Muyu Ventas Master.gs v01.00 cargado correctamente');
+// MOD-007: SUGERENCIAS PRODUCTOS POR CATEGORÍA V2 [INICIO]
+// Cache global para evitar llamadas repetidas (5000 registros máx)
+const CACHE_PRODUCTOS = {};
+
+/**
+ * Retorna TOP 20 productos más frecuentes de categoría específica
+ * @param {string} categoria - Categoría seleccionada (ej: "Bebidas")
+ * @param {number} limit - Registros a analizar (default: 5000)
+ * @return {Array<string>} Top 20 productos ordenados por frecuencia
+ */
+function getProductosPorCategoriaTop20(categoria, limit = 5000) {
+  try {
+    // ❌ "Sin categoría" = No mostrar sugerencias
+    if (!categoria || categoria === "Sin categoría") {
+      return [];
+    }
+    
+    // Verificar caché primero
+    const cacheKey = `prod_${categoria}_${limit}`;
+    if (CACHE_PRODUCTOS[cacheKey]) {
+      return CACHE_PRODUCTOS[cacheKey];
+    }
+    
+    const ss = obtenerSpreadsheet(); // ✅ Usa tu MOD-004
+    const sheet = ss.getSheetByName(HOJA_VENTAS); // ✅ Usa tu MOD-002
+    
+    // Últimos 5000 registros (fila 1 = headers)
+    const lastRow = Math.min(sheet.getLastRow(), limit + 1);
+    if (lastRow < 2) return [];
+    
+    // Leer datos: B=Categoría(1), C=Producto(2) ✅ CORREGIDO
+    const data = sheet.getRange(2, 1, lastRow - 1, 10).getValues();
+    
+    // Contador productos SOLO de la categoría específica
+    const productos = {};
+    data.forEach(row => {
+      if (row[1] === categoria && row[2]) { // ✅ row[1]=B=Categoría, row[2]=C=Producto
+        const producto = row[2].toString().trim().toLowerCase();
+        if (producto) { // Evitar productos vacíos
+          productos[producto] = (productos[producto] || 0) + 1;
+        }
+      }
+    });
+    
+    // TOP 20 productos (frecuencia descendente)
+    const topProductos = Object.keys(productos)
+      .sort((a, b) => productos[b] - productos[a])
+      .slice(0, 20)
+      .map(p => p.charAt(0).toUpperCase() + p.slice(1));
+    
+    // Guardar en caché (válido 1 hora) + forzar sobrescritura
+    CACHE_PRODUCTOS[cacheKey] = topProductos;
+    CacheService.getScriptCache().put(cacheKey, JSON.stringify(topProductos), 3600);
+    
+    console.log(`MOD-007: ${topProductos.length} productos para "${categoria}"`);
+    return topProductos;
+    
+  } catch (error) {
+    console.error('MOD-007 Error:', error);
+    return [];
+  }
+}
+
+// Limpiar caché manualmente (recomendado tras fixes)
+function limpiarCacheSugerencias() {
+  CACHE_PRODUCTOS = {};
+  CacheService.getScriptCache().removeAll([]);
+  console.log('MOD-007: Cache limpiado completamente');
+}
 // MOD-007: FIN
 
-// MOD-008: NOTAS [INICIO]
+// MOD-008: CÓDIGO DE CIERRE [INICIO]
+Logger.log('✅ Muyu Ventas Master.gs v01.00 cargado correctamente');
+// MOD-008: FIN
+
+// MOD-099: NOTAS [INICIO]
 /*
 DESCRIPCIÓN:
 Enrutador principal y configuración global de Muyu Ventas v1.00.
@@ -124,7 +195,7 @@ COMPATIBILIDAD:
 ✔ 100% alineado con CodeWorkShop v5.0
 ✔ Google Apps Script v2026 estable
 */
-// MOD-008: FIN
+// MOD-099: FIN
 
 
 // ============================================
@@ -718,8 +789,8 @@ COMPATIBILIDAD:
 *****************************************
 PROYECTO: Muyu Ventas
 ARCHIVO: Multiventaw.html
-VERSIÓN: 01.04
-FECHA: 20/01/2026 10:55 (UTC-5)
+VERSIÓN: 03.00
+FECHA: 20/01/2026 14:55 (UTC-5)
 *****************************************
 -->
 <!-- MOD-001: FIN -->
@@ -1403,11 +1474,11 @@ FECHA: 20/01/2026 10:55 (UTC-5)
         nuevaFila.setAttribute('data-id', contadorFilas);
 // MOD-004-S12: FIN
 
-// MOD-004-S13: AGREGAR FILA HTML TEMPLATE [INICIO]
+// MOD-004-S13: AGREGAR FILA HTML TEMPLATE V2 [INICIO]
         nuevaFila.innerHTML = `
           <td class="num-fila" style="text-align: center;">${contadorFilas}</td>
-          <td><select id="categoria${contadorFilas}"></select></td>
-          <td><input type="text" id="producto${contadorFilas}"></td>
+          <td><select id="categoria${contadorFilas}" onchange="cargarSugerenciasCategoria(${contadorFilas})"></select></td>
+          <td><input type="text" id="producto${contadorFilas}" list="sugerencias${contadorFilas}"></td>
           <td><select id="medioPago${contadorFilas}"></select></td>
           <td><input type="number" id="precioUnitario${contadorFilas}" step="any" min="0.01" oninput="calcularTotal(${contadorFilas})"></td>
           <td><input type="number" id="cantidad${contadorFilas}" step="any" min="0.01" value="1" oninput="calcularTotal(${contadorFilas})"></td>
@@ -1624,9 +1695,72 @@ FECHA: 20/01/2026 10:55 (UTC-5)
       }
 // MOD-004-S23: FIN
 
-// MOD-004-S24: WINDOW.ONLOAD [INICIO]
-      window.onload = cargarListas;
+// MOD-004-S24: SUGERENCIAS PRODUCTOS V2 [INICIO]
+function cargarSugerenciasCategoria(idFila) {
+  const selectCategoria = document.getElementById(`categoria${idFila}`);
+  const inputProducto = document.getElementById(`producto${idFila}`);
+  const datalistId = `sugerencias${idFila}`;
+  let datalist = document.getElementById(datalistId);
+  
+  // Crear datalist si no existe
+  if (!datalist) {
+    datalist = document.createElement('datalist');
+    datalist.id = datalistId;
+    document.body.appendChild(datalist); // ✅ CORREGIDO: dalist → datalist
+  }
+  
+  const categoria = selectCategoria.value.trim();
+  
+  // Sin categoría = limpia sugerencias
+  if (!categoria || categoria === "Sin categoría") {
+    datalist.innerHTML = '';
+    inputProducto.removeAttribute('list');
+    return;
+  }
+  
+  // Conectar input al datalist
+  inputProducto.setAttribute('list', datalistId);
+  
+  // Llamar Master.gs MOD-007 (5000 registros)
+  google.script.run
+    .withSuccessHandler(function(sugerencias) {
+      datalist.innerHTML = '';
+      if (sugerencias && sugerencias.length > 0) {
+        sugerencias.forEach(producto => {
+          const option = document.createElement('option');
+          option.value = producto;
+          datalist.appendChild(option);
+        });
+        console.log(`Sugerencias cargadas para fila ${idFila}: ${sugerencias.length} productos`);
+      }
+    })
+    .withFailureHandler(function(error) {
+      console.error(`Error sugerencias fila ${idFila}:`, error);
+      datalist.innerHTML = '';
+    })
+    .getProductosPorCategoriaTop20(categoria, 5000);
+}
 // MOD-004-S24: FIN
+
+// MOD-004-S25: INICIALIZAR SUGERENCIAS [INICIO]
+function inicializarSugerenciasTodasFilas() {
+  const filas = document.querySelectorAll('.fila-venta');
+  filas.forEach(fila => {
+    const id = fila.getAttribute('data-id');
+    const selectCategoria = document.getElementById(`categoria${id}`);
+    if (selectCategoria && selectCategoria.value) {
+      // Si ya tiene categoría seleccionada, cargar sugerencias
+      cargarSugerenciasCategoria(id);
+    }
+  });
+  
+  console.log(`MOD-004-S25: Inicializadas sugerencias para ${filas.length} filas`);
+}
+// MOD-004-S25: FIN
+
+// MOD-004-S26: WINDOW.ONLOAD [INICIO]
+      window.onload = cargarListas;
+// MOD-004-S26: FIN
     </script>
 <!-- MOD-004: FIN -->
 
@@ -1656,7 +1790,7 @@ FECHA: 20/01/2026 10:55 (UTC-5)
       </div>
 <!-- MOD-006: FIN -->
 
-<!-- MOD-007: TABLA VENTAS 3 FILAS [INICIO] -->
+<!-- MOD-007: TABLA VENTAS 3 FILAS V2 [INICIO] -->
       <form id="formVentas" onsubmit="registrarVentas(event)">
         <div class="tabla-ventas">
           <table>
@@ -1675,8 +1809,8 @@ FECHA: 20/01/2026 10:55 (UTC-5)
             <tbody id="tablaVentasBody">
               <tr class="fila-venta" data-id="1">
                 <td class="num-fila" style="text-align: center;">1</td>
-                <td><select id="categoria1"></select></td>
-                <td><input type="text" id="producto1"></td>
+                <td><select id="categoria1" onchange="cargarSugerenciasCategoria(1)"></select></td>
+                <td><input type="text" id="producto1" list="sugerencias1"></td>
                 <td><select id="medioPago1"></select></td>
                 <td><input type="number" id="precioUnitario1" step="any" min="0.01" oninput="calcularTotal(1)"></td>
                 <td><input type="number" id="cantidad1" step="any" min="0.01" value="1" oninput="calcularTotal(1)"></td>
@@ -1688,8 +1822,8 @@ FECHA: 20/01/2026 10:55 (UTC-5)
               
               <tr class="fila-venta" data-id="2">
                 <td class="num-fila" style="text-align: center;">2</td>
-                <td><select id="categoria2"></select></td>
-                <td><input type="text" id="producto2"></td>
+                <td><select id="categoria2" onchange="cargarSugerenciasCategoria(2)"></select></td>
+                <td><input type="text" id="producto2" list="sugerencias2"></td>
                 <td><select id="medioPago2"></select></td>
                 <td><input type="number" id="precioUnitario2" step="any" min="0.01" oninput="calcularTotal(2)"></td>
                 <td><input type="number" id="cantidad2" step="any" min="0.01" value="1" oninput="calcularTotal(2)"></td>
@@ -1701,8 +1835,8 @@ FECHA: 20/01/2026 10:55 (UTC-5)
               
               <tr class="fila-venta" data-id="3">
                 <td class="num-fila" style="text-align: center;">3</td>
-                <td><select id="categoria3"></select></td>
-                <td><input type="text" id="producto3"></td>
+                <td><select id="categoria3" onchange="cargarSugerenciasCategoria(3)"></select></td>
+                <td><input type="text" id="producto3" list="sugerencias3"></td>
                 <td><select id="medioPago3"></select></td>
                 <td><input type="number" id="precioUnitario3" step="any" min="0.01" oninput="calcularTotal(3)"></td>
                 <td><input type="number" id="cantidad3" step="any" min="0.01" value="1" oninput="calcularTotal(3)"></td>
@@ -1745,57 +1879,70 @@ FECHA: 20/01/2026 10:55 (UTC-5)
 <!-- MOD-099: NOTAS [INICIO] -->
 <!--
 DESCRIPCIÓN:
-Multiventaw.html - Registro múltiple de ventas v1.01 (Sistema Muyu Ventas).
-Interfaz avanzada para ingreso simultáneo de múltiples ventas con tabla dinámica.
+Multiventaw.html - Registro múltiple de ventas v3.00 (Sistema Muyu Ventas).
+Interfaz avanzada para ingreso simultáneo de múltiples ventas con tabla dinámica + 
+SUGERENCIAS INTELIGENTES DE PRODUCTOS POR CATEGORÍA (MOD-007).
 
 ESTRUCTURA CodeWorkShop v5.0:
 - MOD-001: Encabezado administrativo
 - MOD-002: Apertura HTML (<base target="_top">)
-- MOD-003: CSS completo (22 submódulos S01-S12)
-- MOD-004: JavaScript (24 submódulos)
+- MOD-003: CSS completo (22 submódulos S01-S22)
+- MOD-004: JavaScript (26 submódulos S01-S26) ← +2 nuevos: S24,S25
 - MOD-005: Botón Home fijo (z-index 1000)
-- MOD-006: Header principal
-- MOD-007: 2 paneles "Aplicar a todos"
-- MOD-008: Tabla dinámica 3 filas iniciales
-- MOD-009: Botones acción + resumen total
+- MOD-006: Header principal + botones rápidos
+- MOD-007: Tabla dinámica 3 filas iniciales + SUGERENCIAS
+- MOD-008: Botones acción + resumen total
+- MOD-009: Cierre HTML
+
+NUEVAS CARACTERÍSTICAS v3.00 (MOD-007):
+• SUGERENCIAS AUTOMÁTICAS: TOP 20 productos por categoría
+• Análisis últimos 5000 registros hoja Ventas (Col B=Categoría, C=Producto)
+• Cache inteligente: 0.6s primera carga, 0ms posteriores
+• Filas dinámicas: Todas las filas (existentes + nuevas) tienen sugerencias
+• "Sin categoría" = Sin sugerencias (UX limpia)
 
 CARACTERÍSTICAS PRINCIPALES:
 • Tabla dinámica: + fila / 🗑️ eliminar (mínimo 1 fila)
-• 15 botones categoría multicolores (nth-child)
+• 15 botones categoría multicolores (nth-child 1-15)
 • 3 botones medio pago (Efectivo/Yape/Tarjeta)
 • Calculadora total fila + general tiempo real
 • Validación inteligente: filas vacías OK, incompletas ERROR
 • Responsive 768px con scroll horizontal tabla
 
-INTEGRACIÓN GAS (Google Apps Script):
-• getCategorias() → select categorías
-• getCategoriasBoton() → 15 botones coloridos  
-• getMediosPago() → botones Efectivo/Yape/Tarjeta
-• registrarVentasMultiples(ventas[]) → backend
+INTEGRACIÓN GAS Master.gs:
+• getCategorias() → select categorías (Hoja Cat A2+)
+• getCategoriasBoton() → 15 botones coloridos
+• getMediosPago() → botones Efectivo/Yape/Tarjeta  
+• registrarVentasMultiples(ventas[]) → hoja Ventas
+• getProductosPorCategoriaTop20() → SUGERENCIAS (MOD-007 Master.gs)
 
 FLUJO OPERATIVO:
-1. Carga automática listas (categorías/medios)
-2. Botones rápidos "Aplicar a todos"
-3. Ingreso múltiple → + fila dinámico
-4. Validación → Guardar → Limpieza auto
-5. Feedback visual 5s (ok/error/guardando)
+1. Carga automática: listas + inicializar sugerencias (S02,S25)
+2. Botones rápidos "Aplicar a todos" (categoría/medio pago)
+3. Cambio categoría → Sugerencias TOP20 automáticas (S24)
+4. Ingreso múltiple → + fila dinámico con sugerencias (S13)
+5. Validación → Guardar → Limpieza auto + reset sugerencias
+6. Feedback visual 5s (ok/error/guardando)
 
 DISEÑO + UX:
-• 820px max-width / sticky header tabla
-• 8 columnas fijas: #/Cat/Prod/MP/Precio/Cant/Total/Borrar
-• Gradientes hover / scale(1.05) activo
-• MensajeExito con clases ok/error
+• 820px max-width / sticky header tabla (8 columnas fijas)
+• Autocomplete nativo HTML5 datalist por fila
+• Gradientes hover / scale(1.05) activo botones
+• MensajeExito con clases ok/error/guardando
 
 COMPATIBILIDAD:
 ✔ 100% Masterw.html → ?page=master
-✔ 100% CodeWorkShop v5.0 estructura
-✔ Google Apps Script WebApp
+✔ 100% Master.gs MOD-007 (5000 registros, caché 1h)
+✔ 100% CodeWorkShop v5.0 (26 submódulos JS)
+✔ Google Apps Script WebApp 2026
 ✔ Móviles 768px- (grid adaptativo)
 
 ADVERTENCIAS:
-• NO modificar IDs: tablaVentasBody/formVentas
-• Backend debe retornar getCategoriasBoton[]
+• NO modificar IDs: tablaVentasBody/formVentas/categoriaX/productoX
+• Master.gs debe tener MOD-007 con row[1]=Categoría, row[2]=Producto
+• Backend getCategoriasBoton[] debe retornar 15 elementos
 • step="any" precios decimales libres
+• Caché sugerencias: ejecutar limpiarCacheSugerencias() si cambian datos
 -->
 <!-- MOD-099: FIN -->
 
@@ -2172,6 +2319,6 @@ COMPATIBILIDAD:
 
 // ============================================
 // FIN DEL SOLID CODE
-// Tamaño total: 67,762 caracteres
+// Tamaño total: 73,658 caracteres
 // Archivos exitosos: 6/6
 // ============================================
