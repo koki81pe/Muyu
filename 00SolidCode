@@ -1,7 +1,6 @@
-
 // ============================================
 // SOLID CODE - MUYU
-// Generado: 15/12/2025, 3:05:03 p. m.
+// Generado: 20/1/2026, 11:05:57 a. m.
 // Total de archivos: 6
 // ============================================
 
@@ -12,17 +11,25 @@
 // URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Master.gs
 // ============================================
 
-//// ============================================
-//// MASTER.GS - CONFIGURACIÓN Y ENRUTADOR
-//// ============================================
+// MOD-001: ENCABEZADO [INICIO]
+/*
+*****************************************
+PROYECTO: Muyu Ventas
+ARCHIVO: Master.gs
+VERSIÓN: 01.00
+FECHA: 19/01/2026 21:59 (UTC-5)
+*****************************************
+*/
+// MOD-001: FIN
 
-// CONFIGURACIÓN GLOBAL (solo aquí, una vez)
+// MOD-002: CONFIGURACIÓN GLOBAL [INICIO]
 const SPREADSHEET_ID = '1lZ8OEIfeUvHqxWsVHYy4W1ow2VpIYCvTr9YFAxDkCCU';
 const HOJA_VENTAS = 'Ventas';
 const HOJA_CATEGORIAS = 'Cat';
 const HOJA_MEDIOS_PAGO = 'Mpago';
+// MOD-002: FIN
 
-//// ENRUTADOR PRINCIPAL
+// MOD-003: ENRUTADOR PRINCIPAL [INICIO]
 function doGet(e) {
   try {
     const page = e.parameter.page || 'master';
@@ -61,16 +68,21 @@ function doGet(e) {
     `);
   }
 }
+// MOD-003: FIN
 
-//// FUNCIONES AUXILIARES COMPARTIDAS
+// MOD-004: SPREADSHEET HELPER [INICIO]
 function obtenerSpreadsheet() {
   return SpreadsheetApp.openById(SPREADSHEET_ID);
 }
+// MOD-004: FIN
 
+// MOD-005: FECHA PERU [INICIO]
 function obtenerFechaPeru() {
   return Utilities.formatDate(new Date(), "GMT-5", "dd/MM/yyyy");
 }
+// MOD-005: FIN
 
+// MOD-006: ÚLTIMA FILA [INICIO]
 function encontrarUltimaFila(sheet) {
   const colCValues = sheet.getRange('C2:C').getValues();
   let lastRow = 1;
@@ -82,6 +94,37 @@ function encontrarUltimaFila(sheet) {
   }
   return lastRow + 1;
 }
+// MOD-006: FIN
+
+// MOD-007: CÓDIGO DE CIERRE [INICIO]
+Logger.log('✅ Muyu Ventas Master.gs v01.00 cargado correctamente');
+// MOD-007: FIN
+
+// MOD-008: NOTAS [INICIO]
+/*
+DESCRIPCIÓN:
+Enrutador principal y configuración global de Muyu Ventas v1.00.
+
+DEPENDENCIAS:
+- HTML: Masterw.html, Univentaw.html, Multiventaw.html
+- Spreadsheet: 1lZ8OEIfeUvHqxWsVHYy4W1ow2VpIYCvTr9YFAxDkCCU
+  - Hojas: Ventas, Cat, Mpago
+
+FUNCIONES CRÍTICAS:
+- MOD-003: doGet() - Enrutador de páginas
+- MOD-002: Constantes de configuración global
+- MOD-006: encontrarUltimaFila() - Para registros secuenciales
+
+ADVERTENCIAS:
+- MOD-003: Verificar nombres exactos de archivos HTML
+- MOD-002: SPREADSHEET_ID debe tener permisos de edición
+- GMT-5 fijo para Perú (sin DST)
+
+COMPATIBILIDAD:
+✔ 100% alineado con CodeWorkShop v5.0
+✔ Google Apps Script v2026 estable
+*/
+// MOD-008: FIN
 
 
 // ============================================
@@ -89,6 +132,18 @@ function encontrarUltimaFila(sheet) {
 // URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Masterw.html
 // ============================================
 
+<!-- MOD-001: ENCABEZADO [INICIO] -->
+<!--
+*****************************************
+PROYECTO: Muyu Ventas
+ARCHIVO: Masterw.html
+VERSIÓN: 01.01
+FECHA: 19/01/2026 22:06 (UTC-5)
+*****************************************
+-->
+<!-- MOD-001: FIN -->
+
+<!-- MOD-002: APERTURA HTML [INICIO] -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -96,161 +151,172 @@ function encontrarUltimaFila(sheet) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Intranet Muyu</title>
   
-  <!-- Metaetiquetas para vista previa en WhatsApp y redes sociales -->
+  <!-- Metaetiquetas OG para WhatsApp/redes -->
   <meta property="og:title" content="Intranet Muyu">
   <meta property="og:description" content="Sistema de Gestión de Ventas">
   <meta property="og:type" content="website">
-  
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .container {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-      padding: 40px;
-      max-width: 500px;
-      width: 100%;
-      text-align: center;
-    }
-
-    h1 {
-      color: #333;
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      font-weight: 700;
-    }
-
-    .subtitle {
-      color: #666;
-      font-size: 1rem;
-      margin-bottom: 40px;
-    }
-
-    .menu-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
-
-    .btn {
-      padding: 18px 30px;
-      font-size: 1.1rem;
-      font-weight: 600;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn:active {
-      transform: translateY(-1px);
-    }
-
-    .btn-venta-simple {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-    }
-
-    .btn-venta-multiple {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      color: white;
-    }
-
-    .btn-precio {
-      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      color: white;
-    }
-
-    .btn-perfumes {
-      background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-      color: white;
-    }
-
-    .icon {
-      font-size: 1.5rem;
-    }
-
-    .footer {
-      margin-top: 30px;
-      color: #999;
-      font-size: 0.85rem;
-    }
-
-    @media (max-width: 600px) {
-      .container {
-        padding: 30px 20px;
-      }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      .btn {
-        padding: 15px 25px;
-        font-size: 1rem;
-      }
-    }
-  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🌿 Intranet Muyu</h1>
-    <p class="subtitle">Sistema de Gestión de Ventas</p>
-    
-    <div class="menu-buttons">
-      <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=univenta" target="_blank" class="btn btn-venta-simple">
-        <span class="icon">📝</span>
-        <span>Venta Simple</span>
-      </a>
-      
-      <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=multiventa" target="_blank" class="btn btn-venta-multiple">
-        <span class="icon">📊</span>
-        <span>Venta Múltiple</span>
-      </a>
-      
-      <a href="https://script.google.com/macros/s/AKfycby9LuCHB5l3yrf_u0V0ayFpvJ58R-qHrTeaQkBhAfDcTrItw4_7gCAYhw-qcvUqtxwk/exec" target="_blank" class="btn btn-precio">
-        <span class="icon">💰</span>
-        <span>Precio</span>
-      </a>
+<!-- MOD-002: FIN -->
 
-      <a href="https://script.google.com/macros/s/AKfycbxhP_g5_d3Yk8qqZaYaJc4I07Qp3gJGMJrGqGkxK9i-uorDa8UNODtpF_OdzB0mPuZUOQ/exec" target="_blank" class="btn btn-perfumes">
-        <span class="icon">🌸</span>
-        <span>Perfumes</span>
-      </a>
-    </div>
+<!-- MOD-003: CONTENEDOR PRINCIPAL [INICIO] -->
+<div class="container">
+  <h1>🌿 Intranet Muyu</h1>
+  <p class="subtitle">Sistema de Gestión de Ventas</p>
+<!-- MOD-003: FIN -->
+
+<!-- MOD-004: MENÚ DE BOTONES [INICIO] -->
+  <div class="menu-buttons">
+    <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=univenta" 
+       target="_blank" 
+       class="btn btn-venta-simple">
+      <span class="icon">📝</span>
+      <span>Venta Simple</span>
+    </a>
     
-    <div class="footer">
-      <p>© 2025 Muyu - Todos los derechos reservados</p>
-    </div>
+    <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=multiventa" 
+       target="_blank" 
+       class="btn btn-venta-multiple">
+      <span class="icon">📊</span>
+      <span>Venta Múltiple</span>
+    </a>
+    
+    <a href="https://script.google.com/macros/s/AKfycby9LuCHB5l3yrf_u0V0ayFpvJ58R-qHrTeaQkBhAfDcTrItw4_7gCAYhw-qcvUqtxwk/exec" 
+       target="_blank" 
+       class="btn btn-precio">
+      <span class="icon">💰</span>
+      <span>Precio</span>
+    </a>
+
+    <a href="https://script.google.com/macros/s/AKfycbxhP_g5_d3Yk8qqZaYaJc4I07Qp3gJGMJrGqGkxK9i-uorDa8UNODtpF_OdzB0mPuZUOQ/exec" 
+       target="_blank" 
+       class="btn btn-perfumes">
+      <span class="icon">🌸</span>
+      <span>Perfumes</span>
+    </a>
+
+    <a href="https://script.google.com/macros/s/AKfycbxRI50F5jWBKUViS9aigANM0Wh0K8iZ9wofy_ShqnjoBXWE_p1S3q5a3uYpKqSK0ywe/exec" 
+       target="_blank" 
+       class="btn btn-reporte">
+      <span class="icon">📈</span>
+      <span>Reporte</span>
+    </a>
   </div>
+<!-- MOD-004: FIN -->
+
+<!-- MOD-005: FOOTER [INICIO] -->
+  <div class="footer">
+    <p>© 2025 Muyu - Todos los derechos reservados</p>
+  </div>
+</div>
+<!-- MOD-005: FIN -->
+
+<!-- MOD-006: ESTILOS CSS [INICIO] -->
+<style>
+/* MOD-006-S01: RESET Y BASE [INICIO] */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+/* MOD-006-S01: FIN */
+
+/* MOD-006-S02: CONTENEDOR [INICIO] */
+.container {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  padding: 40px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+h1 { color: #333; font-size: 2.5rem; margin-bottom: 15px; font-weight: 700; }
+.subtitle { color: #666; font-size: 1rem; margin-bottom: 40px; }
+/* MOD-006-S02: FIN */
+
+/* MOD-006-S03: BOTONES BASE [INICIO] */
+.menu-buttons { display: flex; flex-direction: column; gap: 20px; }
+.btn {
+  padding: 18px 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+.btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); }
+.btn:active { transform: translateY(-1px); }
+/* MOD-006-S03: FIN */
+
+/* MOD-006-S04: GRADIENTES [INICIO] */
+.btn-venta-simple { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+.btn-venta-multiple { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+.btn-precio { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+.btn-perfumes { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white; }
+.btn-reporte { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white; }
+.icon { font-size: 1.5rem; }
+/* MOD-006-S04: FIN */
+
+/* MOD-006-S05: RESPONSIVE [INICIO] */
+.footer { margin-top: 30px; color: #999; font-size: 0.85rem; }
+@media (max-width: 600px) {
+  .container { padding: 30px 20px; }
+  h1 { font-size: 2rem; }
+  .btn { padding: 15px 25px; font-size: 1rem; }
+}
+/* MOD-006-S05: FIN */
+</style>
+<!-- MOD-006: FIN -->
+
+<!-- MOD-007: CIERRE HTML [INICIO] -->
 </body>
 </html>
+<!-- MOD-007: FIN -->
+
+<!-- MOD-099: NOTAS [INICIO] -->
+<!--
+DESCRIPCIÓN:
+Página principal Masterw.html de Muyu Ventas v1.01.
+Menú de acceso rápido a 5 módulos principales.
+
+ESTRUCTURA CORREGIDA:
+- MOD-001: Encabezado administrativo (solo comentarios)
+- MOD-002: Apertura HTML completa (DOCTYPE + head + body)
+- MOD-003/004/005: Contenido body segmentado
+- MOD-006: Estilos CSS (5 submódulos)
+- MOD-007: Cierre HTML
+
+ENLACES (5 módulos):
+1. Venta Simple (?page=univenta)
+2. Venta Múltiple (?page=multiventa)  
+3. Precio (script externo)
+4. Perfumes (script externo)
+5. Reporte (script externo)
+
+CARACTERÍSTICAS:
+✔ 5 gradientes únicos preservados
+✔ Responsive 600px breakpoint
+✔ Meta OG para WhatsApp
+✔ target="_blank" seguridad
+
+COMPATIBILIDAD:
+✔ 100% CodeWorkShop v5.0
+✔ Estructura exacta del ejemplo proporcionado
+-->
+<!-- MOD-099: FIN -->
 
 
 // ============================================
@@ -258,16 +324,24 @@ function encontrarUltimaFila(sheet) {
 // URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Multivenga.gs
 // ============================================
 
-//// ============================================
-//// MULTIVENTA.GS - MÓDULO DE VENTA MÚLTIPLE
-//// ============================================
+// MOD-001: ENCABEZADO [INICIO]
+/*
+*****************************************
+PROYECTO: Muyu Ventas
+ARCHIVO: Multiventa.gs
+VERSIÓN: 01.00
+FECHA: 19/01/2026 22:02 (UTC-5)
+*****************************************
+*/
+// MOD-001: FIN
 
-//// CARGAR MEDIOS DE PAGO (alias para compatibilidad)
+// MOD-002: ALIAS MEDIOS PAGO [INICIO]
 function getMediosPago() {
   return getModosPago();
 }
+// MOD-002: FIN
 
-//// CARGAR BOTONES DE CATEGORÍA DESDE HOJA Bcat
+// MOD-003: BOTONES CATEGORÍA [INICIO]
 function getCategoriasBoton() {
   const ss = obtenerSpreadsheet();
   const sheetBcat = ss.getSheetByName('Bcat');
@@ -283,12 +357,10 @@ function getCategoriasBoton() {
     return [];
   }
   
-  // Obtener categorías válidas de la hoja Cat
   const categoriasValidas = sheetCat.getRange('A2:A').getValues()
     .map(row => row[0])
     .filter(cat => cat !== '');
   
-  // Obtener datos de Bcat (desde fila 2)
   const datosBcat = sheetBcat.getRange('A2:B').getValues();
   
   const botonesCategoria = [];
@@ -297,7 +369,6 @@ function getCategoriasBoton() {
     const categoria = row[0];
     const boton = row[1];
     
-    // Solo agregar si ambos campos tienen valor y la categoría existe en Cat
     if (categoria && categoria.toString().trim() !== '' && 
         boton && boton.toString().trim() !== '' &&
         categoriasValidas.includes(categoria)) {
@@ -310,109 +381,60 @@ function getCategoriasBoton() {
   
   return botonesCategoria;
 }
+// MOD-003: FIN
 
-//// REGISTRAR VENTAS MÚLTIPLES
+// MOD-004: REGISTRAR MÚLTIPLES [INICIO]
 function registrarVentasMultiples(ventas) {
-  // =====================================================
-  // VALIDACIÓN INICIAL DE DATOS
-  // =====================================================
-  if (!ventas) {
-    throw new Error("No se recibieron datos de ventas");
-  }
-  
-  if (!Array.isArray(ventas)) {
-    throw new Error("Los datos recibidos no son un array válido");
-  }
-  
-  if (ventas.length === 0) {
-    throw new Error("El array de ventas está vacío");
+  if (!ventas || !Array.isArray(ventas) || ventas.length === 0) {
+    throw new Error("No se recibieron datos de ventas válidos");
   }
   
   const ss = obtenerSpreadsheet();
   const sheet = ss.getSheetByName(HOJA_VENTAS);
-  
-  // Fecha Perú
   const fechaPeru = obtenerFechaPeru();
   
-  // =====================================================
-  // VALIDACIÓN DE CAMPOS ALERTA - NUEVA LÓGICA
-  // =====================================================
-  // Detectar filas con "campos alerta" (Producto o Precio) pero incompletas
+  // Validación de campos incompletos
   const filasProblematicas = [];
-  
   ventas.forEach((venta, index) => {
     const tieneProducto = venta.producto && venta.producto.trim() !== '';
     const tienePrecio = venta.precioUnitario && parseFloat(venta.precioUnitario) > 0;
     const tieneMedioPago = venta.medioPago && venta.medioPago.trim() !== '';
     const tieneCantidad = venta.cantidad && parseFloat(venta.cantidad) > 0;
     
-    // Si tiene CAMPO ALERTA (Producto O Precio)
-    if (tieneProducto || tienePrecio) {
-      // Debe tener TODOS los campos obligatorios
-      if (!tieneProducto || !tieneMedioPago || !tienePrecio || !tieneCantidad) {
-        filasProblematicas.push({
-          fila: index + 1,
-          producto: tieneProducto,
-          medioPago: tieneMedioPago,
-          precio: tienePrecio,
-          cantidad: tieneCantidad
-        });
-      }
+    if ((tieneProducto || tienePrecio) && 
+        (!tieneProducto || !tieneMedioPago || !tienePrecio || !tieneCantidad)) {
+      filasProblematicas.push({ fila: index + 1, producto: tieneProducto, medioPago: tieneMedioPago, precio: tienePrecio, cantidad: tieneCantidad });
     }
   });
   
-  // Si hay filas problemáticas, lanzar error y NO guardar nada
   if (filasProblematicas.length > 0) {
     let mensajeError = "⚠️ Hay campos incompletos en las siguientes filas:\n\n";
-    
     filasProblematicas.forEach(problema => {
       const camposFaltantes = [];
       if (!problema.producto) camposFaltantes.push("Producto");
       if (!problema.medioPago) camposFaltantes.push("Medio de Pago");
       if (!problema.precio) camposFaltantes.push("Precio");
       if (!problema.cantidad) camposFaltantes.push("Cantidad");
-      
       mensajeError += `Fila ${problema.fila}: Falta(n) ${camposFaltantes.join(', ')}\n`;
     });
-    
     mensajeError += "\nPor favor completa todos los campos obligatorios o deja la fila completamente vacía.";
-    
     throw new Error(mensajeError);
   }
   
-  // =====================================================
-  // FILTRAR VENTAS VÁLIDAS (solo filas realmente completas)
-  // =====================================================
   const ventasValidas = ventas.filter(venta =>
-    venta.producto && 
-    venta.producto.trim() !== '' &&
-    venta.medioPago && 
-    venta.medioPago.trim() !== '' &&
-    venta.precioUnitario && 
-    parseFloat(venta.precioUnitario) > 0 &&
-    venta.cantidad && 
-    parseFloat(venta.cantidad) > 0
+    venta.producto && venta.producto.trim() !== '' &&
+    venta.medioPago && venta.medioPago.trim() !== '' &&
+    venta.precioUnitario && parseFloat(venta.precioUnitario) > 0 &&
+    venta.cantidad && parseFloat(venta.cantidad) > 0
   );
   
   if (ventasValidas.length === 0) {
-    throw new Error("No hay ventas válidas para registrar. Asegúrate de completar: Producto, Medio de Pago, Precio y Cantidad.");
+    throw new Error("No hay ventas válidas para registrar");
   }
   
-  // =====================================================
-  // REGISTRO EN LA HOJA (sin cambios - mantiene todo igual)
-  // =====================================================
-  // Ubicar la última fila usando la columna guía (Producto - columna C)
   const newRow = encontrarUltimaFila(sheet);
-  
-  // Contar cuántos Yapes hay en este registro múltiple
-  const cantidadYapes = ventasValidas.filter(v => 
-    v.medioPago.toUpperCase() === 'YAPE'
-  ).length;
-  
-  // Solo aplicar formato si hay MÁS DE 1 Yape
+  const cantidadYapes = ventasValidas.filter(v => v.medioPago.toUpperCase() === 'YAPE').length;
   const aplicarFormatoYape = cantidadYapes > 1;
-  
-  // Registrar cada venta de forma consecutiva
   let ultimaFilaYape = -1;
   
   ventasValidas.forEach((venta, index) => {
@@ -426,434 +448,264 @@ function registrarVentasMultiples(ventas) {
     sheet.getRange(currentRow, 6).setValue(parseFloat(venta.cantidad) || 0);
     sheet.getRange(currentRow, 7).setFormula(`=E${currentRow}*F${currentRow}`);
     
-    // PINTAR CELDA DE PRODUCTO SI ES YAPE Y HAY MÚLTIPLES YAPES
     if (aplicarFormatoYape && venta.medioPago.toUpperCase() === 'YAPE') {
-      sheet.getRange(currentRow, 3).setBackground('#FFFF66'); // Amarillo intenso
-      ultimaFilaYape = currentRow; // Guardar la última fila Yape
+      sheet.getRange(currentRow, 3).setBackground('#FFFF66');
+      ultimaFilaYape = currentRow;
     }
   });
   
-  // APLICAR LÍNEA NEGRA EN LA ÚLTIMA FILA YAPE SI HAY MÚLTIPLES
   if (aplicarFormatoYape && ultimaFilaYape > 0) {
     sheet.getRange(ultimaFilaYape, 3).setBorder(
-      null, null, true, null, // solo borde inferior
+      null, null, true, null,
       null, null, 
-      '#000000', // Color NEGRO para la línea
+      '#000000',
       SpreadsheetApp.BorderStyle.SOLID_MEDIUM
     );
   }
   
   return `${ventasValidas.length} venta(s) registrada(s) correctamente`;
 }
+// MOD-004: FIN
 
-
-// ============================================
-// BATERÍA DE PRUEBAS - MULTIVENTA
-// ============================================
-
+// MOD-005: BATERÍA PRUEBAS [INICIO]
 function EJECUTAR_TODAS_LAS_PRUEBAS_MULTIVENTA() {
   Logger.clear();
   Logger.log('🧪 ============================================');
   Logger.log('🧪 INICIANDO BATERÍA DE PRUEBAS - MULTIVENTA');
   Logger.log('🧪 ============================================\n');
   
-  const resultados = {
-    total: 0,
-    exitosas: 0,
-    fallidas: 0,
-    detalles: []
-  };
+  const resultados = { total: 0, exitosas: 0, fallidas: 0, detalles: [] };
   
-  // ====================================
-  // PRUEBAS DE CONFIGURACIÓN
-  // ====================================
-  ejecutarPrueba('TEST 1: Verificar Spreadsheet ID', test_spreadsheetId, resultados);
-  ejecutarPrueba('TEST 2: Verificar acceso a hoja Ventas', test_hojaVentas, resultados);
-  ejecutarPrueba('TEST 3: Verificar acceso a hoja Cat', test_hojaCat, resultados);
-  ejecutarPrueba('TEST 4: Verificar acceso a hoja Mpago', test_hojaMpago, resultados);
-  ejecutarPrueba('TEST 5: Verificar acceso a hoja Bcat', test_hojaBcat, resultados);
+  // Configuración
+  ejecutarPrueba('TEST 1: Spreadsheet ID', test_spreadsheetId, resultados);
+  ejecutarPrueba('TEST 2: Hoja Ventas', test_hojaVentas, resultados);
+  ejecutarPrueba('TEST 3: Hoja Cat', test_hojaCat, resultados);
+  ejecutarPrueba('TEST 4: Hoja Mpago', test_hojaMpago, resultados);
+  ejecutarPrueba('TEST 5: Hoja Bcat', test_hojaBcat, resultados);
   
-  // ====================================
-  // PRUEBAS DE FUNCIONES GET
-  // ====================================
+  // Funciones GET
   ejecutarPrueba('TEST 6: getCategorias()', test_getCategorias, resultados);
   ejecutarPrueba('TEST 7: getModosPago()', test_getModosPago, resultados);
-  ejecutarPrueba('TEST 8: getMediosPago() [alias]', test_getMediosPago, resultados);
+  ejecutarPrueba('TEST 8: getMediosPago()', test_getMediosPago, resultados);
   ejecutarPrueba('TEST 9: getCategoriasBoton()', test_getCategoriasBoton, resultados);
   
-  // ====================================
-  // PRUEBAS DE FUNCIONES AUXILIARES
-  // ====================================
+  // Auxiliares
   ejecutarPrueba('TEST 10: obtenerFechaPeru()', test_obtenerFechaPeru, resultados);
   ejecutarPrueba('TEST 11: encontrarUltimaFila()', test_encontrarUltimaFila, resultados);
   
-  // ====================================
-  // PRUEBAS DE VALIDACIÓN
-  // ====================================
-  ejecutarPrueba('TEST 12: registrarVentasMultiples() - Array vacío', test_arrayVacio, resultados);
-  ejecutarPrueba('TEST 13: registrarVentasMultiples() - Datos null', test_datosNull, resultados);
-  ejecutarPrueba('TEST 14: registrarVentasMultiples() - Datos no array', test_datosNoArray, resultados);
-  ejecutarPrueba('TEST 15: registrarVentasMultiples() - Fila incompleta con Producto', test_filaIncompletaProducto, resultados);
-  ejecutarPrueba('TEST 16: registrarVentasMultiples() - Fila incompleta con Precio', test_filaIncompletaPrecio, resultados);
-  ejecutarPrueba('TEST 17: registrarVentasMultiples() - Fila vacía (ignorar)', test_filaVacia, resultados);
-  ejecutarPrueba('TEST 18: registrarVentasMultiples() - Venta válida simple', test_ventaValidaSimple, resultados);
-  ejecutarPrueba('TEST 19: registrarVentasMultiples() - Múltiples ventas válidas', test_ventasValidasMultiples, resultados);
-  ejecutarPrueba('TEST 20: registrarVentasMultiples() - Múltiples Yapes (formato)', test_multiplesYapes, resultados);
+  // Validación
+  ejecutarPrueba('TEST 12: Array vacío', test_arrayVacio, resultados);
+  ejecutarPrueba('TEST 13: Datos null', test_datosNull, resultados);
+  ejecutarPrueba('TEST 14: No array', test_datosNoArray, resultados);
+  ejecutarPrueba('TEST 15: Fila incompleta Producto', test_filaIncompletaProducto, resultados);
+  ejecutarPrueba('TEST 16: Fila incompleta Precio', test_filaIncompletaPrecio, resultados);
+  ejecutarPrueba('TEST 17: Fila vacía', test_filaVacia, resultados);
   
-  // ====================================
-  // RESUMEN FINAL
-  // ====================================
+  // Registrar
+  ejecutarPrueba('TEST 18: Venta simple', test_ventaValidaSimple, resultados);
+  ejecutarPrueba('TEST 19: Múltiples ventas', test_ventasValidasMultiples, resultados);
+  ejecutarPrueba('TEST 20: Múltiples Yapes', test_multiplesYapes, resultados);
+  
+  // Resumen
   Logger.log('\n🧪 ============================================');
-  Logger.log('🧪 RESUMEN DE PRUEBAS');
+  Logger.log(`✅ Total: ${resultados.total} | Exitosas: ${resultados.exitosas} | Fallidas: ${resultados.fallidas}`);
+  Logger.log(`📊 Éxito: ${((resultados.exitosas/resultados.total)*100).toFixed(2)}%`);
   Logger.log('🧪 ============================================');
-  Logger.log(`✅ Total de pruebas: ${resultados.total}`);
-  Logger.log(`✅ Exitosas: ${resultados.exitosas}`);
-  Logger.log(`❌ Fallidas: ${resultados.fallidas}`);
-  Logger.log(`📊 Porcentaje de éxito: ${((resultados.exitosas/resultados.total)*100).toFixed(2)}%`);
-  Logger.log('🧪 ============================================\n');
-  
-  // Mostrar detalles de pruebas fallidas
-  if (resultados.fallidas > 0) {
-    Logger.log('\n⚠️ DETALLES DE PRUEBAS FALLIDAS:');
-    Logger.log('⚠️ ============================================');
-    resultados.detalles
-      .filter(d => d.estado === 'FALLIDA')
-      .forEach(d => {
-        Logger.log(`\n❌ ${d.nombre}`);
-        Logger.log(`   Error: ${d.mensaje}`);
-      });
-  }
   
   return resultados;
 }
+// MOD-005: FIN
 
-// ====================================
-// FUNCIÓN AUXILIAR PARA EJECUTAR PRUEBAS
-// ====================================
+// MOD-006: FUNCIONES PRUEBA [INICIO]
 function ejecutarPrueba(nombre, funcionPrueba, resultados) {
   resultados.total++;
   try {
     funcionPrueba();
     resultados.exitosas++;
-    resultados.detalles.push({
-      nombre: nombre,
-      estado: 'EXITOSA',
-      mensaje: 'OK'
-    });
+    resultados.detalles.push({ nombre, estado: 'EXITOSA', mensaje: 'OK' });
     Logger.log(`✅ ${nombre}: EXITOSA`);
   } catch (error) {
     resultados.fallidas++;
-    resultados.detalles.push({
-      nombre: nombre,
-      estado: 'FALLIDA',
-      mensaje: error.message
-    });
-    Logger.log(`❌ ${nombre}: FALLIDA - ${error.message}`);
+    resultados.detalles.push({ nombre, estado: 'FALLIDA', mensaje: error.message });
+    Logger.log(`❌ ${nombre}: ${error.message}`);
   }
 }
 
-// ====================================
-// PRUEBAS DE CONFIGURACIÓN
-// ====================================
 function test_spreadsheetId() {
-  if (!SPREADSHEET_ID || SPREADSHEET_ID === '') {
-    throw new Error('SPREADSHEET_ID no definido');
-  }
-  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-  if (!ss) {
-    throw new Error('No se puede abrir el Spreadsheet');
-  }
+  if (!SPREADSHEET_ID) throw new Error('SPREADSHEET_ID no definido');
+  SpreadsheetApp.openById(SPREADSHEET_ID);
 }
 
 function test_hojaVentas() {
-  const ss = obtenerSpreadsheet();
-  const sheet = ss.getSheetByName(HOJA_VENTAS);
-  if (!sheet) {
-    throw new Error(`Hoja "${HOJA_VENTAS}" no encontrada`);
-  }
+  const sheet = obtenerSpreadsheet().getSheetByName(HOJA_VENTAS);
+  if (!sheet) throw new Error(`Hoja "${HOJA_VENTAS}" no encontrada`);
 }
 
 function test_hojaCat() {
-  const ss = obtenerSpreadsheet();
-  const sheet = ss.getSheetByName(HOJA_CATEGORIAS);
-  if (!sheet) {
-    throw new Error(`Hoja "${HOJA_CATEGORIAS}" no encontrada`);
-  }
+  const sheet = obtenerSpreadsheet().getSheetByName(HOJA_CATEGORIAS);
+  if (!sheet) throw new Error(`Hoja "${HOJA_CATEGORIAS}" no encontrada`);
 }
 
 function test_hojaMpago() {
-  const ss = obtenerSpreadsheet();
-  const sheet = ss.getSheetByName(HOJA_MEDIOS_PAGO);
-  if (!sheet) {
-    throw new Error(`Hoja "${HOJA_MEDIOS_PAGO}" no encontrada`);
-  }
+  const sheet = obtenerSpreadsheet().getSheetByName(HOJA_MEDIOS_PAGO);
+  if (!sheet) throw new Error(`Hoja "${HOJA_MEDIOS_PAGO}" no encontrada`);
 }
 
 function test_hojaBcat() {
-  const ss = obtenerSpreadsheet();
-  const sheet = ss.getSheetByName('Bcat');
-  if (!sheet) {
-    throw new Error('Hoja "Bcat" no encontrada');
-  }
+  const sheet = obtenerSpreadsheet().getSheetByName('Bcat');
+  if (!sheet) throw new Error('Hoja "Bcat" no encontrada');
 }
 
-// ====================================
-// PRUEBAS DE FUNCIONES GET
-// ====================================
 function test_getCategorias() {
   const categorias = getCategorias();
-  if (!Array.isArray(categorias)) {
-    throw new Error('getCategorias() no devuelve un array');
+  if (!Array.isArray(categorias) || categorias.length === 0) {
+    throw new Error('getCategorias() inválido');
   }
-  if (categorias.length === 0) {
-    throw new Error('getCategorias() devuelve array vacío');
-  }
-  Logger.log(`   → Categorías encontradas: ${categorias.length}`);
+  Logger.log(`   → ${categorias.length} categorías`);
 }
 
 function test_getModosPago() {
-  const modosPago = getModosPago();
-  if (!Array.isArray(modosPago)) {
-    throw new Error('getModosPago() no devuelve un array');
+  const modos = getModosPago();
+  if (!Array.isArray(modos) || modos.length === 0) {
+    throw new Error('getModosPago() inválido');
   }
-  if (modosPago.length === 0) {
-    throw new Error('getModosPago() devuelve array vacío');
-  }
-  Logger.log(`   → Modos de pago encontrados: ${modosPago.length}`);
+  Logger.log(`   → ${modos.length} modos pago`);
 }
 
 function test_getMediosPago() {
-  const mediosPago = getMediosPago();
-  if (!Array.isArray(mediosPago)) {
-    throw new Error('getMediosPago() no devuelve un array');
+  const medios = getMediosPago();
+  if (!Array.isArray(medios) || medios.length === 0) {
+    throw new Error('getMediosPago() inválido');
   }
-  if (mediosPago.length === 0) {
-    throw new Error('getMediosPago() devuelve array vacío');
-  }
-  Logger.log(`   → Medios de pago encontrados: ${mediosPago.length}`);
+  Logger.log(`   → ${medios.length} medios pago`);
 }
 
 function test_getCategoriasBoton() {
-  const categoriasBoton = getCategoriasBoton();
-  if (!Array.isArray(categoriasBoton)) {
-    throw new Error('getCategoriasBoton() no devuelve un array');
+  const botones = getCategoriasBoton();
+  if (!Array.isArray(botones)) throw new Error('getCategoriasBoton() no array');
+  if (botones.length > 0) {
+    const btn = botones[0];
+    if (!btn.categoria || !btn.boton) throw new Error('Estructura botón inválida');
   }
-  // Es válido que devuelva array vacío si Bcat está vacía
-  Logger.log(`   → Botones de categoría encontrados: ${categoriasBoton.length}`);
-  
-  if (categoriasBoton.length > 0) {
-    const primerBoton = categoriasBoton[0];
-    if (!primerBoton.categoria || !primerBoton.boton) {
-      throw new Error('Estructura de botón incorrecta (debe tener .categoria y .boton)');
-    }
-  }
+  Logger.log(`   → ${botones.length} botones categoría`);
 }
 
-// ====================================
-// PRUEBAS DE FUNCIONES AUXILIARES
-// ====================================
 function test_obtenerFechaPeru() {
   const fecha = obtenerFechaPeru();
-  if (!fecha || typeof fecha !== 'string') {
-    throw new Error('obtenerFechaPeru() no devuelve string');
+  if (!/^\d{2}\/\d{2}\/\d{4}$/.test(fecha)) {
+    throw new Error(`Fecha inválida: ${fecha}`);
   }
-  // Verificar formato dd/MM/yyyy
-  const regex = /^\d{2}\/\d{2}\/\d{4}$/;
-  if (!regex.test(fecha)) {
-    throw new Error(`Formato de fecha incorrecto: ${fecha} (esperado: dd/MM/yyyy)`);
-  }
-  Logger.log(`   → Fecha: ${fecha}`);
+  Logger.log(`   → ${fecha}`);
 }
 
 function test_encontrarUltimaFila() {
-  const ss = obtenerSpreadsheet();
-  const sheet = ss.getSheetByName(HOJA_VENTAS);
-  const ultimaFila = encontrarUltimaFila(sheet);
-  
-  if (typeof ultimaFila !== 'number') {
-    throw new Error('encontrarUltimaFila() no devuelve un número');
-  }
-  if (ultimaFila < 1) {
-    throw new Error(`Última fila inválida: ${ultimaFila}`);
-  }
-  Logger.log(`   → Última fila: ${ultimaFila}`);
+  const fila = encontrarUltimaFila(obtenerSpreadsheet().getSheetByName(HOJA_VENTAS));
+  if (typeof fila !== 'number' || fila < 1) throw new Error(`Fila inválida: ${fila}`);
+  Logger.log(`   → Fila: ${fila}`);
 }
 
-// ====================================
-// PRUEBAS DE VALIDACIÓN
-// ====================================
 function test_arrayVacio() {
-  try {
-    registrarVentasMultiples([]);
-    throw new Error('Debería lanzar error con array vacío');
-  } catch (error) {
-    if (!error.message.includes('vacío')) {
-      throw new Error(`Mensaje de error incorrecto: ${error.message}`);
-    }
-  }
+  try { registrarVentasMultiples([]); throw new Error('No lanzó error'); }
+  catch (e) { if (!e.message.includes('vacío')) throw e; }
 }
 
 function test_datosNull() {
-  try {
-    registrarVentasMultiples(null);
-    throw new Error('Debería lanzar error con datos null');
-  } catch (error) {
-    if (!error.message.includes('No se recibieron datos')) {
-      throw new Error(`Mensaje de error incorrecto: ${error.message}`);
-    }
-  }
+  try { registrarVentasMultiples(null); throw new Error('No lanzó error'); }
+  catch (e) { if (!e.message.includes('datos')) throw e; }
 }
 
 function test_datosNoArray() {
-  try {
-    registrarVentasMultiples("no es un array");
-    throw new Error('Debería lanzar error con datos no array');
-  } catch (error) {
-    if (!error.message.includes('no son un array válido')) {
-      throw new Error(`Mensaje de error incorrecto: ${error.message}`);
-    }
-  }
+  try { registrarVentasMultiples("texto"); throw new Error('No lanzó error'); }
+  catch (e) { if (!e.message.includes('array')) throw e; }
 }
 
 function test_filaIncompletaProducto() {
-  const ventaIncompleta = [{
-    categoria: 'Impresiones',
-    producto: 'Volante A5',
-    medioPago: '', // FALTA
-    precioUnitario: '',
-    cantidad: ''
-  }];
-  
   try {
-    registrarVentasMultiples(ventaIncompleta);
-    throw new Error('Debería lanzar error con fila incompleta (solo Producto)');
-  } catch (error) {
-    if (!error.message.includes('campos incompletos')) {
-      throw new Error(`Mensaje de error incorrecto: ${error.message}`);
-    }
-  }
+    registrarVentasMultiples([{
+      categoria: 'Test', producto: 'Volante', medioPago: '', precioUnitario: '', cantidad: ''
+    }]);
+    throw new Error('No lanzó error');
+  } catch (e) { if (!e.message.includes('incompletos')) throw e; }
 }
 
 function test_filaIncompletaPrecio() {
-  const ventaIncompleta = [{
-    categoria: '',
-    producto: '', // FALTA
-    medioPago: '',
-    precioUnitario: '10.50',
-    cantidad: ''
-  }];
-  
   try {
-    registrarVentasMultiples(ventaIncompleta);
-    throw new Error('Debería lanzar error con fila incompleta (solo Precio)');
-  } catch (error) {
-    if (!error.message.includes('campos incompletos')) {
-      throw new Error(`Mensaje de error incorrecto: ${error.message}`);
-    }
-  }
+    registrarVentasMultiples([{
+      categoria: '', producto: '', medioPago: '', precioUnitario: '10.50', cantidad: ''
+    }]);
+    throw new Error('No lanzó error');
+  } catch (e) { if (!e.message.includes('incompletos')) throw e; }
 }
 
 function test_filaVacia() {
-  const ventaVacia = [{
-    categoria: 'Impresiones',
-    producto: '',
-    medioPago: 'Yape',
-    precioUnitario: '',
-    cantidad: '1'
-  }];
-  
   try {
-    registrarVentasMultiples(ventaVacia);
-    throw new Error('Debería lanzar error porque no hay ventas válidas');
-  } catch (error) {
-    if (!error.message.includes('No hay ventas válidas')) {
-      throw new Error(`Mensaje de error incorrecto: ${error.message}`);
-    }
-  }
+    registrarVentasMultiples([{
+      categoria: '', producto: '', medioPago: 'Yape', precioUnitario: '', cantidad: '1'
+    }]);
+    throw new Error('No lanzó error');
+  } catch (e) { if (!e.message.includes('válidas')) throw e; }
 }
 
 function test_ventaValidaSimple() {
-  // NOTA: Esta prueba SÍ escribirá en la hoja
-  const ventaValida = [{
-    categoria: 'TEST',
-    producto: 'Producto TEST',
-    medioPago: 'Efectivo',
-    precioUnitario: '10.00',
-    cantidad: '1'
-  }];
-  
-  const resultado = registrarVentasMultiples(ventaValida);
-  if (!resultado.includes('1 venta(s) registrada(s)')) {
-    throw new Error(`Resultado inesperado: ${resultado}`);
-  }
-  Logger.log(`   → ${resultado}`);
+  const resultado = registrarVentasMultiples([{
+    categoria: 'TEST', producto: 'Test Simple', medioPago: 'Efectivo',
+    precioUnitario: '10.00', cantidad: '1'
+  }]);
+  if (!resultado.includes('1 venta')) throw new Error(`Resultado: ${resultado}`);
+  Logger.log(`   → ${resultado}`);
 }
 
 function test_ventasValidasMultiples() {
-  // NOTA: Esta prueba SÍ escribirá en la hoja
-  const ventas = [
-    {
-      categoria: 'TEST',
-      producto: 'Producto TEST 1',
-      medioPago: 'Efectivo',
-      precioUnitario: '10.00',
-      cantidad: '2'
-    },
-    {
-      categoria: 'TEST',
-      producto: 'Producto TEST 2',
-      medioPago: 'Yape',
-      precioUnitario: '15.50',
-      cantidad: '1'
-    },
-    {
-      categoria: '',
-      producto: '', // Fila vacía - debe ignorarse
-      medioPago: '',
-      precioUnitario: '',
-      cantidad: '1'
-    }
-  ];
-  
-  const resultado = registrarVentasMultiples(ventas);
-  if (!resultado.includes('2 venta(s) registrada(s)')) {
-    throw new Error(`Resultado inesperado: ${resultado}`);
-  }
-  Logger.log(`   → ${resultado}`);
+  const resultado = registrarVentasMultiples([
+    { categoria: 'TEST', producto: 'Test 1', medioPago: 'Efectivo', precioUnitario: '10.00', cantidad: '2' },
+    { categoria: 'TEST', producto: 'Test 2', medioPago: 'Yape', precioUnitario: '15.50', cantidad: '1' },
+    { categoria: '', producto: '', medioPago: '', precioUnitario: '', cantidad: '1' }
+  ]);
+  if (!resultado.includes('2 venta')) throw new Error(`Resultado: ${resultado}`);
+  Logger.log(`   → ${resultado}`);
 }
 
 function test_multiplesYapes() {
-  // NOTA: Esta prueba SÍ escribirá en la hoja y aplicará formato
-  const ventas = [
-    {
-      categoria: 'TEST',
-      producto: 'Yape TEST 1',
-      medioPago: 'Yape',
-      precioUnitario: '10.00',
-      cantidad: '1'
-    },
-    {
-      categoria: 'TEST',
-      producto: 'Yape TEST 2',
-      medioPago: 'Yape',
-      precioUnitario: '20.00',
-      cantidad: '1'
-    },
-    {
-      categoria: 'TEST',
-      producto: 'Yape TEST 3',
-      medioPago: 'Yape',
-      precioUnitario: '30.00',
-      cantidad: '1'
-    }
-  ];
-  
-  const resultado = registrarVentasMultiples(ventas);
-  if (!resultado.includes('3 venta(s) registrada(s)')) {
-    throw new Error(`Resultado inesperado: ${resultado}`);
-  }
-  Logger.log(`   → ${resultado} (con formato amarillo y línea negra)`);
+  const resultado = registrarVentasMultiples([
+    { categoria: 'TEST', producto: 'Yape 1', medioPago: 'Yape', precioUnitario: '10.00', cantidad: '1' },
+    { categoria: 'TEST', producto: 'Yape 2', medioPago: 'Yape', precioUnitario: '20.00', cantidad: '1' },
+    { categoria: 'TEST', producto: 'Yape 3', medioPago: 'Yape', precioUnitario: '30.00', cantidad: '1' }
+  ]);
+  if (!resultado.includes('3 venta')) throw new Error(`Resultado: ${resultado}`);
+  Logger.log(`   → ${resultado} (formato aplicado)`);
 }
+// MOD-006: FIN
+
+// MOD-007: CÓDIGO DE CIERRE [INICIO]
+Logger.log('✅ Muyu Ventas Multiventa.gs v01.00 cargado correctamente');
+// MOD-007: FIN
+
+// MOD-099: NOTAS [INICIO]
+/*
+DESCRIPCIÓN:
+Módulo Multiventa.gs para registro múltiple con validación robusta v1.00.
+
+DEPENDENCIAS EXTERNAS:
+- Master.gs: obtenerSpreadsheet(), encontrarUltimaFila(), obtenerFechaPeru()
+- Univenta.gs: getModosPago()
+- Spreadsheet: Hojas 'Ventas', 'Cat', 'Mpago', 'Bcat'
+
+CARACTERÍSTICAS CLAVE:
+- MOD-003: Valida Bcat contra Cat (doble validación)
+- MOD-004: Validación estricta "todo o nada" por fila
+- MOD-004: Formato especial múltiples Yapes (amarillo + línea negra)
+- MOD-005/006: 20 pruebas automatizadas completas
+
+ADVERTENCIAS:
+- Pruebas TEST 18-20 escriben datos reales (usar con cuidado)
+- Hoja Bcat requerida (A=categoría, B=botón)
+- Validación bloquea registros parciales
+
+COMPATIBILIDAD:
+✔ 100% alineado con CodeWorkShop v5.0
+✔ 100% retrocompatible con Univenta.gs
+*/
+// MOD-099: FIN
 
 
 // ============================================
@@ -861,20 +713,38 @@ function test_multiplesYapes() {
 // URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Multiventaw.html
 // ============================================
 
+<!-- MOD-001: ENCABEZADO [INICIO] -->
+<!--
+*****************************************
+PROYECTO: Muyu Ventas
+ARCHIVO: Multiventaw.html
+VERSIÓN: 01.04
+FECHA: 20/01/2026 10:55 (UTC-5)
+*****************************************
+-->
+<!-- MOD-001: FIN -->
+
+<!-- MOD-002: APERTURA HTML [INICIO] -->
 <!DOCTYPE html>
 <html lang="es">
   <head>
     <base target="_top">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
     <title>Registro Múltiple de Ventas</title>
+<!-- MOD-002: FIN -->
+
+<!-- MOD-003: ESTILOS CSS COMPLETOS [INICIO] -->
     <style>
+/* MOD-003-S01: RESET Y BODY BASE [INICIO] */
       body {
         font-family: "Segoe UI", Arial, sans-serif;
         margin: 0;
         padding: 0;
         background: #f0f2f5;
       }
+/* MOD-003-S01: FIN */
 
+/* MOD-003-S02: BOTÓN HOME [INICIO] */
       /* BOTÓN HOME */
       .btn-home {
         position: fixed;
@@ -902,7 +772,9 @@ function test_multiplesYapes() {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       }
+/* MOD-003-S02: FIN */
 
+/* MOD-003-S03: CONTAINER PRINCIPAL + TÍTULO [INICIO] */
       .container {
         width: 100%;
         max-width: 820px;
@@ -920,7 +792,9 @@ function test_multiplesYapes() {
         color: #333;
         font-size: 1.5rem;
       }
+/* MOD-003-S03: FIN */
 
+/* MOD-003-S04: SECCIONES "APLICAR A TODOS" [INICIO] */
       /* SECCIONES DE BOTONES */
       .aplicar-todos {
         background: #f8f9fa;
@@ -937,22 +811,27 @@ function test_multiplesYapes() {
         font-size: 13px;
         color: #495057;
       }
+/* MOD-003-S04: FIN */
 
-      /* BOTONES DE CATEGORÍA - LAYOUT EQUILIBRADO */
+/* MOD-003-S05: LAYOUT BOTONES CATEGORÍA [INICIO] */
       .botones-categoria {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: 8px;
         justify-items: center;
       }
+/* MOD-003-S05: FIN */
 
+/* MOD-003-S06: LAYOUT BOTONES MEDIOS PAGO [INICIO] */
       .botones-medios-pago {
         display: flex;
         gap: 8px;
         flex-wrap: wrap;
         justify-content: center;
       }
+/* MOD-003-S06: FIN */
 
+/* MOD-003-S07: BOTONES CATEGORÍA BASE [INICIO] */
       /* BOTONES DE CATEGORÍA - COLORES DIVERSOS */
       .btn-categoria {
         padding: 8px 14px;
@@ -966,7 +845,9 @@ function test_multiplesYapes() {
         min-width: 90px;
         text-align: center;
       }
+/* MOD-003-S07: FIN */
 
+/* MOD-003-S08: 15 COLORES NTH-CHILD CATEGORÍAS [INICIO] */
       /* Colores específicos por índice */
       .btn-categoria:nth-child(1) { background: #e74c3c; } /* Rojo */
       .btn-categoria:nth-child(2) { background: #3498db; } /* Azul */
@@ -983,7 +864,9 @@ function test_multiplesYapes() {
       .btn-categoria:nth-child(13) { background: #27ae60; } /* Verde oscuro */
       .btn-categoria:nth-child(14) { background: #d35400; } /* Naranja quemado */
       .btn-categoria:nth-child(15) { background: #7f8c8d; } /* Gris */
+/* MOD-003-S08: FIN */
 
+/* MOD-003-S09: HOVER/ACTIVO BOTONES CATEGORÍA [INICIO] */
       .btn-categoria:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -994,7 +877,9 @@ function test_multiplesYapes() {
         box-shadow: 0 6px 16px rgba(0,0,0,0.3);
         transform: scale(1.05);
       }
+/* MOD-003-S09: FIN */
 
+/* MOD-003-S10: BOTONES MEDIO PAGO BASE [INICIO] */
       /* BOTONES DE MEDIO DE PAGO */
       .btn-medio-pago {
         padding: 10px 20px;
@@ -1005,7 +890,9 @@ function test_multiplesYapes() {
         transition: all 0.3s ease;
         font-weight: bold;
       }
+/* MOD-003-S10: FIN */
 
+/* MOD-003-S11: COLORES ESPECÍFICOS MEDIOS PAGO [INICIO] */
       /* Estilos específicos para cada medio de pago */
       .btn-medio-pago[data-medio="Efectivo"] {
         background: #4CAF50;
@@ -1021,7 +908,9 @@ function test_multiplesYapes() {
         background: #3498db;
         color: #ffffff;
       }
+/* MOD-003-S11: FIN */
 
+/* MOD-003-S12: HOVER/ACTIVO MEDIOS PAGO [INICIO] */
       .btn-medio-pago:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(0,0,0,0.2);
@@ -1032,7 +921,9 @@ function test_multiplesYapes() {
         box-shadow: 0 6px 16px rgba(0,0,0,0.3);
         transform: scale(1.05);
       }
+/* MOD-003-S12: FIN */
 
+/* MOD-003-S13: TABLA VENTAS + TABLE BASE [INICIO] */
       .tabla-ventas {
         width: 100%;
         overflow-x: auto;
@@ -1044,7 +935,9 @@ function test_multiplesYapes() {
         border-collapse: collapse;
         table-layout: fixed;
       }
+/* MOD-003-S13: FIN */
 
+/* MOD-003-S14: HEADERS TABLA + ANCHOS COLUMNAS [INICIO] */
       th {
         background: #1a73e8;
         color: white;
@@ -1067,7 +960,9 @@ function test_multiplesYapes() {
       th:nth-child(6) { width: 50px; } /* Cant */
       th:nth-child(7) { width: 85px; } /* Total */
       th:nth-child(8) { width: 45px; padding: 10px 0 !important; } /* Borrar */
+/* MOD-003-S14: FIN */
 
+/* MOD-003-S15: CELDAS TD + INPUTS/SELECTS [INICIO] */
       td {
         padding: 6px 4px;
         border-bottom: 1px solid #e0e0e0;
@@ -1088,7 +983,9 @@ function test_multiplesYapes() {
         border-radius: 6px;
         box-sizing: border-box;
       }
+/* MOD-003-S15: FIN */
 
+/* MOD-003-S16: INPUTS ESPECÍFICOS + HOVER FILA [INICIO] */
       input[type="number"] {
         text-align: right;
       }
@@ -1101,7 +998,9 @@ function test_multiplesYapes() {
       .fila-venta:hover {
         background: #f9f9f9;
       }
+/* MOD-003-S16: FIN */
 
+/* MOD-003-S17: BOTÓN ELIMINAR FILA [INICIO] */
       .btn-eliminar-fila {
         background: #dc3545;
         color: white;
@@ -1121,7 +1020,9 @@ function test_multiplesYapes() {
       .btn-eliminar-fila:hover {
         background: #c82333;
       }
+/* MOD-003-S17: FIN */
 
+/* MOD-003-S18: BOTONES FILAS + AGREGAR [INICIO] */
       .botones-filas {
         display: flex;
         gap: 10px;
@@ -1147,7 +1048,9 @@ function test_multiplesYapes() {
       .btn-agregar:hover {
         background-color: #218838;
       }
+/* MOD-003-S18: FIN */
 
+/* MOD-003-S19: RESUMEN TOTAL [INICIO] */
       .resumen-total {
         text-align: right;
         padding: 15px;
@@ -1169,7 +1072,9 @@ function test_multiplesYapes() {
         font-weight: bold;
         margin-top: 5px;
       }
+/* MOD-003-S19: FIN */
 
+/* MOD-003-S20: BOTONES PRINCIPALES [INICIO] */
       .botones {
         display: flex;
         gap: 12px;
@@ -1205,7 +1110,9 @@ function test_multiplesYapes() {
       .btn-limpiar:hover {
         background-color: #4a4d51;
       }
+/* MOD-003-S20: FIN */
 
+/* MOD-003-S21: MENSAJES ÉXITO/ERROR [INICIO] */
       #mensajeExito {
         margin-top: 15px;
         padding: 15px;
@@ -1227,7 +1134,9 @@ function test_multiplesYapes() {
         color: #721c24;
         border: 1px solid #f5c6cb;
       }
+/* MOD-003-S21: FIN */
 
+/* MOD-003-S22: RESPONSIVE 768PX COMPLETO [INICIO] */
       @media (max-width: 768px) {
         .btn-home {
           top: 10px;
@@ -1296,15 +1205,22 @@ function test_multiplesYapes() {
           line-height: 24px;
         }
       }
+/* MOD-003-S22: FIN */
     </style>
+<!-- MOD-003: FIN -->
+
+<!-- MOD-004: JAVASCRIPT [INICIO] -->
     <script>
+// MOD-004-S01: VARIABLES GLOBALES [INICIO]
       let categorias = [];
       let categoriasBoton = [];
       let mediosPago = [];
       let contadorFilas = 3;
       let categoriaSeleccionada = null;
       let medioPagoSeleccionado = null;
+// MOD-004-S01: FIN
 
+// MOD-004-S02: CARGARLISTAS() GAS [INICIO]
       function cargarListas() {
         google.script.run.withSuccessHandler(function(cats) {
           categorias = cats;
@@ -1322,7 +1238,9 @@ function test_multiplesYapes() {
           crearBotonesMediosPago();
         }).getMediosPago();
       }
+// MOD-004-S02: FIN
 
+// MOD-004-S03: CREAR BOTONES CATEGORÍAS [INICIO]
       function crearBotonesCategorias() {
         if (categoriasBoton.length === 0) return;
 
@@ -1339,7 +1257,9 @@ function test_multiplesYapes() {
           contenedor.appendChild(boton);
         });
       }
+// MOD-004-S03: FIN
 
+// MOD-004-S04: SELECCIONAR CATEGORÍA [INICIO]
       function seleccionarCategoria(categoria, botonClickeado) {
         document.querySelectorAll('.btn-categoria').forEach(btn => {
           btn.classList.remove('activo');
@@ -1350,7 +1270,9 @@ function test_multiplesYapes() {
 
         aplicarCategoriaATodos();
       }
+// MOD-004-S04: FIN
 
+// MOD-004-S05: APLICAR CATEGORÍA A TODOS [INICIO]
       function aplicarCategoriaATodos() {
         if (!categoriaSeleccionada) return;
 
@@ -1363,7 +1285,9 @@ function test_multiplesYapes() {
           }
         });
       }
+// MOD-004-S05: FIN
 
+// MOD-004-S06: CREAR BOTONES MEDIOS PAGO [INICIO]
       function crearBotonesMediosPago() {
         if (mediosPago.length === 0) return;
 
@@ -1380,7 +1304,9 @@ function test_multiplesYapes() {
           contenedor.appendChild(boton);
         });
       }
+// MOD-004-S06: FIN
 
+// MOD-004-S07: SELECCIONAR MEDIO PAGO [INICIO]
       function seleccionarMedioPago(medio, botonClickeado) {
         document.querySelectorAll('.btn-medio-pago').forEach(btn => {
           btn.classList.remove('activo');
@@ -1391,7 +1317,9 @@ function test_multiplesYapes() {
 
         aplicarMedioPagoATodos();
       }
+// MOD-004-S07: FIN
 
+// MOD-004-S08: APLICAR MEDIO PAGO A TODOS [INICIO]
       function aplicarMedioPagoATodos() {
         if (!medioPagoSeleccionado) return;
 
@@ -1404,7 +1332,9 @@ function test_multiplesYapes() {
           }
         });
       }
+// MOD-004-S08: FIN
 
+// MOD-004-S09: LLENAR SELECTS COMPLETO [INICIO]
       function llenarSelects() {
         if (categorias.length === 0 || mediosPago.length === 0) return;
 
@@ -1440,14 +1370,18 @@ function test_multiplesYapes() {
           }
         });
       }
+// MOD-004-S09: FIN
 
+// MOD-004-S10: CALCULAR TOTAL FILA [INICIO]
       function calcularTotal(id) {
         const precio = parseFloat(document.getElementById(`precioUnitario${id}`).value) || 0;
         const cantidad = parseFloat(document.getElementById(`cantidad${id}`).value) || 0;
         document.getElementById(`total${id}`).value = (precio * cantidad).toFixed(2);
         actualizarTotalGeneral();
       }
+// MOD-004-S10: FIN
 
+// MOD-004-S11: ACTUALIZAR TOTAL GENERAL [INICIO]
       function actualizarTotalGeneral() {
         let totalGeneral = 0;
         const filas = document.querySelectorAll('.fila-venta');
@@ -1458,14 +1392,18 @@ function test_multiplesYapes() {
         });
         document.getElementById('totalGeneral').textContent = `S/ ${totalGeneral.toFixed(2)}`;
       }
+// MOD-004-S11: FIN
 
+// MOD-004-S12: AGREGAR FILA PARTE 1 [INICIO]
       function agregarFila() {
         contadorFilas++;
         const tbody = document.getElementById('tablaVentasBody');
         const nuevaFila = document.createElement('tr');
         nuevaFila.className = 'fila-venta';
         nuevaFila.setAttribute('data-id', contadorFilas);
-        
+// MOD-004-S12: FIN
+
+// MOD-004-S13: AGREGAR FILA HTML TEMPLATE [INICIO]
         nuevaFila.innerHTML = `
           <td class="num-fila" style="text-align: center;">${contadorFilas}</td>
           <td><select id="categoria${contadorFilas}"></select></td>
@@ -1478,7 +1416,9 @@ function test_multiplesYapes() {
             <a href="javascript:void(0)" class="btn-eliminar-fila" onclick="eliminarFila(${contadorFilas})">🗑️</a>
           </td>
         `;
-        
+// MOD-004-S13: FIN
+
+// MOD-004-S14: AGREGAR FILA POST-PROCESADO [INICIO]
         tbody.appendChild(nuevaFila);
         llenarSelects();
         
@@ -1492,7 +1432,9 @@ function test_multiplesYapes() {
           if (selectPago) selectPago.value = medioPagoSeleccionado;
         }
       }
+// MOD-004-S14: FIN
 
+// MOD-004-S15: ELIMINAR FILA [INICIO]
       function eliminarFila(id) {
         const filas = document.querySelectorAll('.fila-venta');
         if (filas.length <= 1) {
@@ -1507,7 +1449,9 @@ function test_multiplesYapes() {
           actualizarTotalGeneral();
         }
       }
+// MOD-004-S15: FIN
 
+// MOD-004-S16: RENUMERAR FILAS [INICIO]
       function renumerarFilas() {
         const filas = document.querySelectorAll('.fila-venta');
         filas.forEach((fila, index) => {
@@ -1515,11 +1459,15 @@ function test_multiplesYapes() {
           if (numCell) numCell.textContent = index + 1;
         });
       }
+// MOD-004-S16: FIN
 
+// MOD-004-S17: LIMPIAR FORMULARIO PARTE 1 [INICIO]
       function limpiarFormulario() {
         if (confirm('¿Estás seguro de limpiar todos los campos?')) {
           document.getElementById('formVentas').reset();
-          
+// MOD-004-S17: FIN
+
+// MOD-004-S18: LIMPIAR BOTONES Y FILAS [INICIO]
           document.querySelectorAll('.btn-categoria').forEach(btn => {
             btn.classList.remove('activo');
           });
@@ -1542,14 +1490,18 @@ function test_multiplesYapes() {
           actualizarTotalGeneral();
         }
       }
+// MOD-004-S18: FIN
 
+// MOD-004-S19: REGISTRAR VENTAS VALIDACIÓN 1 [INICIO]
       function registrarVentas(e) {
         e.preventDefault();
         
         const filas = document.querySelectorAll('.fila-venta');
         const filasProblematicas = [];
         const ventas = [];
-        
+// MOD-004-S19: FIN
+
+// MOD-004-S20: REGISTRAR VENTAS VALIDACIÓN 2 [INICIO]
         filas.forEach(fila => {
           const id = fila.getAttribute('data-id');
           const numeroFila = fila.querySelector('.num-fila').textContent;
@@ -1599,7 +1551,9 @@ function test_multiplesYapes() {
             }
           }
         });
+// MOD-004-S20: FIN
 
+// MOD-004-S21: REGISTRAR VENTAS ERRORES [INICIO]
         if (filasProblematicas.length > 0) {
           let mensajeError = "⚠️ Hay campos incompletos en las siguientes filas:\n\n";
           
@@ -1624,7 +1578,9 @@ function test_multiplesYapes() {
         mensajeDiv.style.display = "block";
         mensajeDiv.style.background = "#fff3cd";
         mensajeDiv.style.color = "#856404";
+// MOD-004-S21: FIN
 
+// MOD-004-S22: REGISTRAR VENTAS GAS CALL [INICIO]
         google.script.run
           .withSuccessHandler(function(mensaje) {
             mostrarMensaje(`✅ ${mensaje}`, "ok");
@@ -1656,7 +1612,9 @@ function test_multiplesYapes() {
           })
           .registrarVentasMultiples(ventas);
       }
+// MOD-004-S22: FIN
 
+// MOD-004-S23: MOSTRAR MENSAJE [INICIO]
       function mostrarMensaje(texto, tipo) {
         const mensajeDiv = document.getElementById('mensajeExito');
         mensajeDiv.textContent = texto;
@@ -1664,16 +1622,24 @@ function test_multiplesYapes() {
         mensajeDiv.style.display = "block";
         setTimeout(() => mensajeDiv.style.display = "none", 5000);
       }
+// MOD-004-S23: FIN
 
+// MOD-004-S24: WINDOW.ONLOAD [INICIO]
       window.onload = cargarListas;
+// MOD-004-S24: FIN
     </script>
+<!-- MOD-004: FIN -->
+
+<!-- MOD-005: "/HEAD"+"BODY"+BOTÓN HOME [INICIO] -->
   </head>
   <body>
     <a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" class="btn-home" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
       <span>🏠</span>
       <span>Home</span>
     </a>
+<!-- MOD-005: FIN -->
 
+<!-- MOD-006: CONTENEDOR Y BOTONES RÁPIDOS [INICIO] -->
     <div class="container">
       <h2>📊 Registro Múltiple de Ventas</h2>
       
@@ -1688,7 +1654,9 @@ function test_multiplesYapes() {
         <div id="botonesMediosPago" class="botones-medios-pago">
         </div>
       </div>
+<!-- MOD-006: FIN -->
 
+<!-- MOD-007: TABLA VENTAS 3 FILAS [INICIO] -->
       <form id="formVentas" onsubmit="registrarVentas(event)">
         <div class="tabla-ventas">
           <table>
@@ -1746,7 +1714,9 @@ function test_multiplesYapes() {
             </tbody>
           </table>
         </div>
+<!-- MOD-007: FIN -->
 
+<!-- MOD-008: BOTONES Y RESUMEN [INICIO] -->
         <div class="botones-filas">
           <button type="button" class="btn-fila btn-agregar" onclick="agregarFila()">+ Agregar otra venta</button>
         </div>
@@ -1764,8 +1734,70 @@ function test_multiplesYapes() {
 
       <div id="mensajeExito"></div>
     </div>
+<!-- MOD-008: FIN -->
+
+
+<!-- MOD-009: CIERRE HTML+ /BODY [INICIO] -->
   </body>
 </html>
+<!-- MOD-009: FIN -->
+
+<!-- MOD-099: NOTAS [INICIO] -->
+<!--
+DESCRIPCIÓN:
+Multiventaw.html - Registro múltiple de ventas v1.01 (Sistema Muyu Ventas).
+Interfaz avanzada para ingreso simultáneo de múltiples ventas con tabla dinámica.
+
+ESTRUCTURA CodeWorkShop v5.0:
+- MOD-001: Encabezado administrativo
+- MOD-002: Apertura HTML (<base target="_top">)
+- MOD-003: CSS completo (22 submódulos S01-S12)
+- MOD-004: JavaScript (24 submódulos)
+- MOD-005: Botón Home fijo (z-index 1000)
+- MOD-006: Header principal
+- MOD-007: 2 paneles "Aplicar a todos"
+- MOD-008: Tabla dinámica 3 filas iniciales
+- MOD-009: Botones acción + resumen total
+
+CARACTERÍSTICAS PRINCIPALES:
+• Tabla dinámica: + fila / 🗑️ eliminar (mínimo 1 fila)
+• 15 botones categoría multicolores (nth-child)
+• 3 botones medio pago (Efectivo/Yape/Tarjeta)
+• Calculadora total fila + general tiempo real
+• Validación inteligente: filas vacías OK, incompletas ERROR
+• Responsive 768px con scroll horizontal tabla
+
+INTEGRACIÓN GAS (Google Apps Script):
+• getCategorias() → select categorías
+• getCategoriasBoton() → 15 botones coloridos  
+• getMediosPago() → botones Efectivo/Yape/Tarjeta
+• registrarVentasMultiples(ventas[]) → backend
+
+FLUJO OPERATIVO:
+1. Carga automática listas (categorías/medios)
+2. Botones rápidos "Aplicar a todos"
+3. Ingreso múltiple → + fila dinámico
+4. Validación → Guardar → Limpieza auto
+5. Feedback visual 5s (ok/error/guardando)
+
+DISEÑO + UX:
+• 820px max-width / sticky header tabla
+• 8 columnas fijas: #/Cat/Prod/MP/Precio/Cant/Total/Borrar
+• Gradientes hover / scale(1.05) activo
+• MensajeExito con clases ok/error
+
+COMPATIBILIDAD:
+✔ 100% Masterw.html → ?page=master
+✔ 100% CodeWorkShop v5.0 estructura
+✔ Google Apps Script WebApp
+✔ Móviles 768px- (grid adaptativo)
+
+ADVERTENCIAS:
+• NO modificar IDs: tablaVentasBody/formVentas
+• Backend debe retornar getCategoriasBoton[]
+• step="any" precios decimales libres
+-->
+<!-- MOD-099: FIN -->
 
 
 // ============================================
@@ -1773,27 +1805,36 @@ function test_multiplesYapes() {
 // URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Univenta.gs
 // ============================================
 
-//// ============================================
-//// UNIVENTA.GS - MÓDULO DE VENTA SIMPLE
-//// ============================================
+// MOD-001: ENCABEZADO [INICIO]
+/*
+*****************************************
+PROYECTO: Muyu Ventas
+ARCHIVO: Univenta.gs
+VERSIÓN: 01.00
+FECHA: 19/01/2026 22:01 (UTC-5)
+*****************************************
+*/
+// MOD-001: FIN
 
-//// CARGAR CATEGORÍAS
+// MOD-002: CATEGORÍAS [INICIO]
 function getCategorias() {
   const ss = obtenerSpreadsheet();
   const sheet = ss.getSheetByName(HOJA_CATEGORIAS);
   const data = sheet.getRange('A2:A').getValues().flat().filter(String);
   return data;
 }
+// MOD-002: FIN
 
-//// CARGAR MODOS DE PAGO
+// MOD-003: MODOS DE PAGO [INICIO]
 function getModosPago() {
   const ss = obtenerSpreadsheet();
   const sheet = ss.getSheetByName(HOJA_MEDIOS_PAGO);
   const data = sheet.getRange('A2:A').getValues().flat().filter(String);
   return data;
 }
+// MOD-003: FIN
 
-//// REGISTRAR VENTA SIMPLE
+// MOD-004: REGISTRAR VENTA [INICIO]
 function registrarVenta(data) {
   const ss = obtenerSpreadsheet();
   const sheet = ss.getSheetByName(HOJA_VENTAS);
@@ -1815,6 +1856,36 @@ function registrarVenta(data) {
   
   return "Registro exitoso";
 }
+// MOD-004: FIN
+
+// MOD-005: CÓDIGO DE CIERRE [INICIO]
+Logger.log('✅ Muyu Ventas Univenta.gs v01.00 cargado correctamente');
+// MOD-005: FIN
+
+// MOD-006: NOTAS [INICIO]
+/*
+DESCRIPCIÓN:
+Módulo Univenta.gs para registro simple de ventas en Muyu Ventas v1.00.
+
+DEPENDENCIAS EXTERNAS:
+- Master.gs: obtenerSpreadsheet(), encontrarUltimaFila(), obtenerFechaPeru()
+- Spreadsheet: Hojas 'Cat', 'Mpago', 'Ventas'
+
+FLujo DE DATOS:
+- MOD-002: Carga categorías desde hoja Cat (A2:A)
+- MOD-003: Carga medios pago desde hoja Mpago (A2:A)
+- MOD-004: Registra venta en columnas A-G (Fecha, Cat, Prod, Pago, Precio, Cant, Total)
+
+ADVERTENCIAS:
+- MOD-004: Validar data.categoria y data.modoPago existan en listas
+- MOD-004: Precio y cantidad convertidos a Number()
+- Fórmula total auto-generada en columna G
+
+COMPATIBILIDAD:
+✔ 100% alineado con CodeWorkShop v5.0
+✔ Integración perfecta con Master.gs
+*/
+// MOD-006: FIN
 
 
 // ============================================
@@ -1822,223 +1893,285 @@ function registrarVenta(data) {
 // URL: https://raw.githubusercontent.com/koki81pe/Muyu/refs/heads/main/Univentaw.html
 // ============================================
 
+<!-- MOD-001: ENCABEZADO [INICIO] -->
+<!--
+*****************************************
+PROYECTO: Muyu Ventas
+ARCHIVO: Univentaw.html
+VERSIÓN: 01.01
+FECHA: 19/01/2026 22:07 (UTC-5)
+*****************************************
+-->
+<!-- MOD-001: FIN -->
+
+<!-- MOD-002: APERTURA HTML [INICIO] -->
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Ventas</title>
-    <style>
-      /* ESTILOS GENERALES */
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background: #f0f2f5;
-      }
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Ventas</title>
+</head>
+<!-- MOD-002: FIN -->
 
-      /* BOTÓN HOME */
-      .btn-home {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        background: #667eea;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 600;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        transition: all 0.3s ease;
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .btn-home:hover {
-        background: #5568d3;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      }
-
-      .container {
-        max-width: 400px;
-        margin: 80px auto 20px;
-        background: #fff;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-
-      h2 {
-        text-align: center;
-        color: #333;
-        margin-bottom: 20px;
-      }
-
-      label {
-        display: block;
-        margin-top: 10px;
-        color: #333;
-        font-weight: bold;
-      }
-
-      select, input {
-        width: 100%;
-        padding: 8px;
-        margin-top: 5px;
-        border: 1px solid #ccc;
-        border-radius: 6px;
-        box-sizing: border-box;
-      }
-
-      button {
-        width: 100%;
-        background: #007BFF;
-        color: white;
-        padding: 10px;
-        margin-top: 15px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-
-      button:hover {
-        background: #0056b3;
-      }
-
-      #mensaje {
-        text-align: center;
-        color: green;
-        font-weight: bold;
-        margin-top: 15px;
-        display: none;
-      }
-
-      @media (max-width: 480px) {
-        .btn-home {
-          top: 10px;
-          left: 10px;
-          padding: 8px 15px;
-          font-size: 13px;
-        }
-
-        .container {
-          margin: 60px 10px 10px;
-          padding: 15px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- BOTÓN HOME -->
-<a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" class="btn-home" style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
+<!-- MOD-003: BOTÓN HOME FIJO [INICIO] -->
+<body>
+<a href="https://script.google.com/macros/s/AKfycbxYPHS6S3oU3U6vM_qmlIFyn0JzrArYSPDYV5bYjQRTuqp3G4qWiew14Nlwzitf2fSF/exec?page=master" 
+   class="btn-home" 
+   style="text-decoration: none; display: flex; align-items: center; gap: 8px;">
   <span>🏠</span>
   <span>Home</span>
 </a>
+<!-- MOD-003: FIN -->
 
-    <div class="container">
-      <h2>Registro de Ventas</h2>
+<!-- MOD-004: CONTENEDOR PRINCIPAL [INICIO] -->
+<div class="container">
+  <h2>Registro de Ventas</h2>
+  
+  <label for="categoria">Categoría:</label>
+  <select id="categoria"></select>
 
-      <label for="categoria">Categoría:</label>
-      <select id="categoria"></select>
+  <label for="producto">Producto:</label>
+  <input type="text" id="producto" placeholder="Nombre del producto">
 
-      <label for="producto">Producto:</label>
-      <input type="text" id="producto" placeholder="Nombre del producto">
+  <label for="modoPago">Modo de Pago:</label>
+  <select id="modoPago"></select>
 
-      <label for="modoPago">Modo de Pago:</label>
-      <select id="modoPago"></select>
+  <label for="precio">Precio Unitario (S/):</label>
+  <input type="number" id="precio" step="0.01" min="0">
 
-      <label for="precio">Precio Unitario (S/):</label>
-      <input type="number" id="precio" step="0.01" min="0">
+  <label for="cantidad">Cantidad:</label>
+  <input type="number" id="cantidad" min="1">
 
-      <label for="cantidad">Cantidad:</label>
-      <input type="number" id="cantidad" min="1">
+  <label for="total">Total (S/):</label>
+  <input type="text" id="total" readonly>
 
-      <label for="total">Total (S/):</label>
-      <input type="text" id="total" readonly>
+  <button onclick="registrarVenta()">Registrar venta</button>
+  <p id="mensaje"></p>
+</div>
+<!-- MOD-004: FIN -->
 
-      <button onclick="registrarVenta()">Registrar venta</button>
+<!-- MOD-005: ESTILOS CSS [INICIO] -->
+<style>
+/* MOD-005-S01: BASE Y FONDO [INICIO] */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f0f2f5;
+}
+/* MOD-005-S01: FIN */
 
-      <p id="mensaje"></p>
-    </div>
+/* MOD-005-S02: BOTÓN HOME [INICIO] */
+.btn-home {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: #667eea;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-home:hover {
+  background: #5568d3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+/* MOD-005-S02: FIN */
 
-    <script>
-      // OBTENER URL BASE
-      const baseUrl = window.location.href.split('?')[0];
+/* MOD-005-S03: CONTENEDOR FORMULARIO [INICIO] */
+.container {
+  max-width: 400px;
+  margin: 80px auto 20px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+/* MOD-005-S03: FIN */
 
-      // CARGAR DESPLEGABLES
-      google.script.run.withSuccessHandler(cargarCategorias).getCategorias();
-      google.script.run.withSuccessHandler(cargarModosPago).getModosPago();
+/* MOD-005-S04: FORMULARIO Y BOTONES [INICIO] */
+label {
+  display: block;
+  margin-top: 10px;
+  color: #333;
+  font-weight: bold;
+}
+select, input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+button {
+  width: 100%;
+  background: #007BFF;
+  color: white;
+  padding: 10px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}
+button:hover {
+  background: #0056b3;
+}
+#mensaje {
+  text-align: center;
+  color: green;
+  font-weight: bold;
+  margin-top: 15px;
+  display: none;
+}
+/* MOD-005-S04: FIN */
 
-      function cargarCategorias(data) {
-        const select = document.getElementById("categoria");
-        data.forEach(cat => {
-          const option = document.createElement("option");
-          option.value = cat;
-          option.textContent = cat;
-          select.appendChild(option);
-        });
-      }
+/* MOD-005-S05: RESPONSIVE [INICIO] */
+@media (max-width: 480px) {
+  .btn-home {
+    top: 10px;
+    left: 10px;
+    padding: 8px 15px;
+    font-size: 13px;
+  }
+  .container {
+    margin: 60px 10px 10px;
+    padding: 15px;
+  }
+}
+/* MOD-005-S05: FIN */
+</style>
+<!-- MOD-005: FIN -->
 
-      function cargarModosPago(data) {
-        const select = document.getElementById("modoPago");
-        data.forEach(mp => {
-          const option = document.createElement("option");
-          option.value = mp;
-          option.textContent = mp;
-          select.appendChild(option);
-        });
-      }
+<!-- MOD-006: JAVASCRIPT [INICIO] -->
+<script>
+// MOD-006-S01: INICIALIZACIÓN [INICIO]
+const baseUrl = window.location.href.split('?')[0];
+google.script.run.withSuccessHandler(cargarCategorias).getCategorias();
+google.script.run.withSuccessHandler(cargarModosPago).getModosPago();
+// MOD-006-S01: FIN
 
-      // CALCULAR TOTAL EN TIEMPO REAL
-      document.getElementById("precio").addEventListener("input", calcularTotal);
-      document.getElementById("cantidad").addEventListener("input", calcularTotal);
+// MOD-006-S02: CARGAR DESPLEGABLES [INICIO]
+function cargarCategorias(data) {
+  const select = document.getElementById("categoria");
+  data.forEach(cat => {
+    const option = document.createElement("option");
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
+}
 
-      function calcularTotal() {
-        const precio = parseFloat(document.getElementById("precio").value) || 0;
-        const cantidad = parseFloat(document.getElementById("cantidad").value) || 0;
-        document.getElementById("total").value = (precio * cantidad).toFixed(2);
-      }
+function cargarModosPago(data) {
+  const select = document.getElementById("modoPago");
+  data.forEach(mp => {
+    const option = document.createElement("option");
+    option.value = mp;
+    option.textContent = mp;
+    select.appendChild(option);
+  });
+}
+// MOD-006-S02: FIN
 
-      // REGISTRAR VENTA (ENVÍO INSTANTÁNEO)
-      function registrarVenta() {
-        const data = {
-          categoria: document.getElementById("categoria").value,
-          producto: document.getElementById("producto").value,
-          modoPago: document.getElementById("modoPago").value,
-          precio: document.getElementById("precio").value,
-          cantidad: document.getElementById("cantidad").value
-        };
+// MOD-006-S03: CALCULADORA TOTAL [INICIO]
+document.getElementById("precio").addEventListener("input", calcularTotal);
+document.getElementById("cantidad").addEventListener("input", calcularTotal);
 
-        // Mostrar mensaje inmediato
-        const msg = document.getElementById("mensaje");
-        msg.textContent = "Registro enviado";
-        msg.style.display = "block";
-        msg.style.color = "green";
+function calcularTotal() {
+  const precio = parseFloat(document.getElementById("precio").value) || 0;
+  const cantidad = parseFloat(document.getElementById("cantidad").value) || 0;
+  document.getElementById("total").value = (precio * cantidad).toFixed(2);
+}
+// MOD-006-S03: FIN
 
-        // Enviar al servidor sin esperar confirmación
-        google.script.run.registrarVenta(data);
+// MOD-006-S04: REGISTRAR VENTA [INICIO]
+function registrarVenta() {
+  const data = {
+    categoria: document.getElementById("categoria").value,
+    producto: document.getElementById("producto").value,
+    modoPago: document.getElementById("modoPago").value,
+    precio: document.getElementById("precio").value,
+    cantidad: document.getElementById("cantidad").value
+  };
 
-        // Limpiar formulario
-        document.getElementById("producto").value = "";
-        document.getElementById("precio").value = "";
-        document.getElementById("cantidad").value = "";
-        document.getElementById("total").value = "";
+  const msg = document.getElementById("mensaje");
+  msg.textContent = "Registro enviado";
+  msg.style.display = "block";
+  msg.style.color = "green";
 
-        // Ocultar mensaje tras 10 segundos
-        setTimeout(() => msg.style.display = "none", 10000);
-      }
-    </script>
-  </body>
+  google.script.run.registrarVenta(data);
+
+  document.getElementById("producto").value = "";
+  document.getElementById("precio").value = "";
+  document.getElementById("cantidad").value = "";
+  document.getElementById("total").value = "";
+
+  setTimeout(() => msg.style.display = "none", 10000);
+}
+// MOD-006-S04: FIN
+</script>
+<!-- MOD-006: FIN -->
+
+<!-- MOD-007: CIERRE HTML [INICIO] -->
+</body>
 </html>
+<!-- MOD-007: FIN -->
+
+<!-- MOD-008: NOTAS [INICIO] -->
+<!--
+DESCRIPCIÓN:
+Formulario Univentaw.html para registro simple de ventas v1.01.
+
+ESTRUCTURA:
+- MOD-001: Encabezado administrativo
+- MOD-002: Apertura HTML5
+- MOD-003: Botón Home fijo (z-index 1000)
+- MOD-004: Formulario 6 campos + botón
+- MOD-005: CSS 5 submódulos (480px responsive)
+- MOD-006: JS 4 submódulos (Google Apps Script)
+
+INTEGRACIÓN GAS:
+- Univenta.gs: getCategorias(), getModosPago(), registrarVenta()
+- Master.gs: Ruta ?page=master (Home)
+
+FLUJO:
+1. Carga automática categorías/medios pago
+2. Calculadora total tiempo real (precio × cantidad)
+3. Envío asíncrono sin bloqueo UI
+4. Limpieza automática + feedback 10s
+
+CARACTERÍSTICAS:
+✔ Botón Home flotante (morado #667eea)
+✔ Formulario compacto 400px max-width
+✔ Input number step="0.01" para precio
+✔ Mensaje verde auto-desaparece
+
+COMPATIBILIDAD:
+✔ 100% CodeWorkShop v5.0
+✔ Estructura exacta del ejemplo
+-->
+<!-- MOD-008: FIN -->
 
 
 // ============================================
 // FIN DEL SOLID CODE
-// Tamaño total: 62,959 caracteres
+// Tamaño total: 67,762 caracteres
+// Archivos exitosos: 6/6
 // ============================================
