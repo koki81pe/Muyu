@@ -1,14 +1,22 @@
-//// ============================================
-//// MASTER.GS - CONFIGURACIÓN Y ENRUTADOR
-//// ============================================
+// MOD-001: ENCABEZADO [INICIO]
+/*
+*****************************************
+PROYECTO: Muyu Ventas
+ARCHIVO: Master.gs
+VERSIÓN: 01.00
+FECHA: 19/01/2026 21:59 (UTC-5)
+*****************************************
+*/
+// MOD-001: FIN
 
-// CONFIGURACIÓN GLOBAL (solo aquí, una vez)
+// MOD-002: CONFIGURACIÓN GLOBAL [INICIO]
 const SPREADSHEET_ID = '1lZ8OEIfeUvHqxWsVHYy4W1ow2VpIYCvTr9YFAxDkCCU';
 const HOJA_VENTAS = 'Ventas';
 const HOJA_CATEGORIAS = 'Cat';
 const HOJA_MEDIOS_PAGO = 'Mpago';
+// MOD-002: FIN
 
-//// ENRUTADOR PRINCIPAL
+// MOD-003: ENRUTADOR PRINCIPAL [INICIO]
 function doGet(e) {
   try {
     const page = e.parameter.page || 'master';
@@ -47,16 +55,21 @@ function doGet(e) {
     `);
   }
 }
+// MOD-003: FIN
 
-//// FUNCIONES AUXILIARES COMPARTIDAS
+// MOD-004: SPREADSHEET HELPER [INICIO]
 function obtenerSpreadsheet() {
   return SpreadsheetApp.openById(SPREADSHEET_ID);
 }
+// MOD-004: FIN
 
+// MOD-005: FECHA PERU [INICIO]
 function obtenerFechaPeru() {
   return Utilities.formatDate(new Date(), "GMT-5", "dd/MM/yyyy");
 }
+// MOD-005: FIN
 
+// MOD-006: ÚLTIMA FILA [INICIO]
 function encontrarUltimaFila(sheet) {
   const colCValues = sheet.getRange('C2:C').getValues();
   let lastRow = 1;
@@ -68,3 +81,34 @@ function encontrarUltimaFila(sheet) {
   }
   return lastRow + 1;
 }
+// MOD-006: FIN
+
+// MOD-007: CÓDIGO DE CIERRE [INICIO]
+Logger.log('✅ Muyu Ventas Master.gs v01.00 cargado correctamente');
+// MOD-007: FIN
+
+// MOD-008: NOTAS [INICIO]
+/*
+DESCRIPCIÓN:
+Enrutador principal y configuración global de Muyu Ventas v1.00.
+
+DEPENDENCIAS:
+- HTML: Masterw.html, Univentaw.html, Multiventaw.html
+- Spreadsheet: 1lZ8OEIfeUvHqxWsVHYy4W1ow2VpIYCvTr9YFAxDkCCU
+  - Hojas: Ventas, Cat, Mpago
+
+FUNCIONES CRÍTICAS:
+- MOD-003: doGet() - Enrutador de páginas
+- MOD-002: Constantes de configuración global
+- MOD-006: encontrarUltimaFila() - Para registros secuenciales
+
+ADVERTENCIAS:
+- MOD-003: Verificar nombres exactos de archivos HTML
+- MOD-002: SPREADSHEET_ID debe tener permisos de edición
+- GMT-5 fijo para Perú (sin DST)
+
+COMPATIBILIDAD:
+✔ 100% alineado con CodeWorkShop v5.0
+✔ Google Apps Script v2026 estable
+*/
+// MOD-008: FIN
