@@ -3,8 +3,8 @@
 *****************************************
 PROYECTO: Muyu Ventas
 ARCHIVO: Multiventa.gs
-VERSIÓN: 01.00
-FECHA: 19/01/2026 22:02 (UTC-5)
+VERSIÓN: 01.01
+FECHA: 30/01/2026 19:34 (UTC-5)
 *****************************************
 */
 // MOD-001: FIN
@@ -122,6 +122,14 @@ function registrarVentasMultiples(ventas) {
     sheet.getRange(currentRow, 6).setValue(parseFloat(venta.cantidad) || 0);
     sheet.getRange(currentRow, 7).setFormula(`=E${currentRow}*F${currentRow}`);
     
+    // Acumulado columna H:
+    if (currentRow === 2) {
+    sheet.getRange(currentRow, 8).setFormula(`=G${currentRow}`);
+    } else {
+    sheet.getRange(currentRow, 8).setFormula(`=H${currentRow - 1}+G${currentRow}`);
+    }
+
+
     if (aplicarFormatoYape && venta.medioPago.toUpperCase() === 'YAPE') {
       sheet.getRange(currentRow, 3).setBackground('#FFFF66');
       ultimaFilaYape = currentRow;
